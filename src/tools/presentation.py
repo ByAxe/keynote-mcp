@@ -18,21 +18,21 @@ class PresentationTools:
         return [
             Tool(
                 name="create_presentation",
-                description="创建新的 Keynote 演示文稿",
+                description="Create a new Keynote presentation",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "title": {
                             "type": "string",
-                            "description": "演示文稿标题"
+                            "description": "Presentation title"
                         },
                         "theme": {
                             "type": "string",
-                            "description": "主题名称（可选）"
+                            "description": "Theme name (optional)"
                         },
                         "template": {
                             "type": "string",
-                            "description": "模板路径（可选）"
+                            "description": "Template path (optional)"
                         }
                     },
                     "required": ["title"]
@@ -40,13 +40,13 @@ class PresentationTools:
             ),
             Tool(
                 name="open_presentation",
-                description="打开现有的 Keynote 演示文稿",
+                description="Open an existing Keynote presentation",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "file_path": {
                             "type": "string",
-                            "description": "演示文稿文件路径"
+                            "description": "Path to the presentation file"
                         }
                     },
                     "required": ["file_path"]
@@ -54,37 +54,37 @@ class PresentationTools:
             ),
             Tool(
                 name="save_presentation",
-                description="保存演示文稿",
+                description="Save a presentation",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }
             ),
             Tool(
                 name="close_presentation",
-                description="关闭演示文稿",
+                description="Close a presentation",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "should_save": {
                             "type": "boolean",
-                            "description": "是否保存（默认为 true）"
+                            "description": "Whether to save before closing (default: true)"
                         }
                     }
                 }
             ),
             Tool(
                 name="list_presentations",
-                description="列出所有打开的演示文稿",
+                description="List all open presentations",
                 inputSchema={
                     "type": "object",
                     "properties": {}
@@ -92,17 +92,17 @@ class PresentationTools:
             ),
             Tool(
                 name="set_presentation_theme",
-                description="设置演示文稿主题",
+                description="Set presentation theme",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "theme_name": {
                             "type": "string",
-                            "description": "主题名称"
+                            "description": "Theme name"
                         }
                     },
                     "required": ["theme_name"]
@@ -110,20 +110,20 @@ class PresentationTools:
             ),
             Tool(
                 name="get_presentation_info",
-                description="获取演示文稿信息",
+                description="Get presentation info (name, slide count, theme)",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }
             ),
             Tool(
                 name="get_available_themes",
-                description="获取可用主题列表",
+                description="Get list of available themes",
                 inputSchema={
                     "type": "object",
                     "properties": {}
@@ -131,26 +131,26 @@ class PresentationTools:
             ),
             Tool(
                 name="get_presentation_resolution",
-                description="获取演示文稿分辨率信息",
+                description="Get presentation resolution (width, height, aspect ratio)",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }
             ),
             Tool(
                 name="get_slide_size",
-                description="获取幻灯片尺寸和比例信息",
+                description="Get slide size, aspect ratio, and layout reference info",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }

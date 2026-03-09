@@ -53,28 +53,28 @@ class UnsplashTools:
         return [
             Tool(
                 name="search_unsplash_images",
-                description="搜索Unsplash图片",
+                description="Search Unsplash for images",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "query": {
                             "type": "string",
-                            "description": "搜索关键词"
+                            "description": "Search query"
                         },
                         "per_page": {
                             "type": "integer",
-                            "description": "每页图片数量（1-30，默认10）",
+                            "description": "Results per page (1-30, default 10)",
                             "minimum": 1,
                             "maximum": 30
                         },
                         "orientation": {
                             "type": "string",
-                            "description": "图片方向（landscape/portrait/squarish）",
+                            "description": "Image orientation (landscape/portrait/squarish)",
                             "enum": ["landscape", "portrait", "squarish"]
                         },
                         "order_by": {
                             "type": "string",
-                            "description": "排序方式（relevant/latest/popular）",
+                            "description": "Sort order (relevant/latest/popular)",
                             "enum": ["relevant", "latest", "popular"]
                         }
                     },
@@ -83,44 +83,44 @@ class UnsplashTools:
             ),
             Tool(
                 name="add_unsplash_image_to_slide",
-                description="搜索Unsplash图片并添加到幻灯片",
+                description="Search Unsplash and add an image to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "query": {
                             "type": "string",
-                            "description": "搜索关键词"
+                            "description": "Search query"
                         },
                         "image_index": {
                             "type": "integer",
-                            "description": "选择第几张图片（0-9，默认0）",
+                            "description": "Image index to select (0-9, default 0)",
                             "minimum": 0,
                             "maximum": 9
                         },
                         "orientation": {
                             "type": "string",
-                            "description": "图片方向（landscape/portrait/squarish）",
+                            "description": "Image orientation (landscape/portrait/squarish)",
                             "enum": ["landscape", "portrait", "squarish"]
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（可选）"
+                            "description": "X coordinate (optional)"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（可选）"
+                            "description": "Y coordinate (optional)"
                         },
                         "width": {
                             "type": "number",
-                            "description": "图片宽度（可选）"
+                            "description": "Image width (optional)"
                         },
                         "height": {
                             "type": "number",
-                            "description": "图片高度（可选）"
+                            "description": "Image height (optional)"
                         }
                     },
                     "required": ["slide_number", "query"]
@@ -128,38 +128,38 @@ class UnsplashTools:
             ),
             Tool(
                 name="get_random_unsplash_image",
-                description="获取随机Unsplash图片并添加到幻灯片",
+                description="Get a random Unsplash image and add it to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "query": {
                             "type": "string",
-                            "description": "搜索关键词（可选）"
+                            "description": "Search query (optional)"
                         },
                         "orientation": {
                             "type": "string",
-                            "description": "图片方向（landscape/portrait/squarish）",
+                            "description": "Image orientation (landscape/portrait/squarish)",
                             "enum": ["landscape", "portrait", "squarish"]
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（可选）"
+                            "description": "X coordinate (optional)"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（可选）"
+                            "description": "Y coordinate (optional)"
                         },
                         "width": {
                             "type": "number",
-                            "description": "图片宽度（可选）"
+                            "description": "Image width (optional)"
                         },
                         "height": {
                             "type": "number",
-                            "description": "图片高度（可选）"
+                            "description": "Image height (optional)"
                         }
                     },
                     "required": ["slide_number"]

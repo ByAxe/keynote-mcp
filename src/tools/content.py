@@ -18,25 +18,25 @@ class ContentTools:
         return [
             Tool(
                 name="add_text_box",
-                description="在幻灯片中添加文本框",
+                description="Add a text box to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "text": {
                             "type": "string",
-                            "description": "文本内容"
+                            "description": "Text content"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议范围：50-950像素，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Origin (0,0) is top-left. Suggested: 50-950px"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议范围：50-650像素，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Origin (0,0) is top-left. Suggested: 50-650px"
                         }
                     },
                     "required": ["slide_number", "text"]
@@ -44,33 +44,33 @@ class ContentTools:
             ),
             Tool(
                 name="add_title",
-                description="在幻灯片中添加标题",
+                description="Add a title to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "title": {
                             "type": "string",
-                            "description": "标题内容"
+                            "description": "Title text"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议标题位置：x=100-200，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for title: 100-200"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议标题位置：y=50-100，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for title: 50-100"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认36）"
+                            "description": "Font size (optional, default 36)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选）"
+                            "description": "Font name (optional)"
                         }
                     },
                     "required": ["slide_number", "title"]
@@ -78,33 +78,33 @@ class ContentTools:
             ),
             Tool(
                 name="add_subtitle",
-                description="在幻灯片中添加副标题",
+                description="Add a subtitle to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "subtitle": {
                             "type": "string",
-                            "description": "副标题内容"
+                            "description": "Subtitle text"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议副标题位置：x=100-200，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for subtitle: 100-200"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议副标题位置：y=120-180，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for subtitle: 120-180"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认24）"
+                            "description": "Font size (optional, default 24)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选）"
+                            "description": "Font name (optional)"
                         }
                     },
                     "required": ["slide_number", "subtitle"]
@@ -112,34 +112,34 @@ class ContentTools:
             ),
             Tool(
                 name="add_bullet_list",
-                description="在幻灯片中添加项目符号列表",
+                description="Add a bullet list to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "items": {
                             "type": "array",
                             "items": {"type": "string"},
-                            "description": "列表项内容"
+                            "description": "List items"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议列表位置：x=100-150，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for list: 100-150"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议列表位置：y=200-300，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for list: 200-300"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认18）"
+                            "description": "Font size (optional, default 18)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选）"
+                            "description": "Font name (optional)"
                         }
                     },
                     "required": ["slide_number", "items"]
@@ -147,34 +147,34 @@ class ContentTools:
             ),
             Tool(
                 name="add_numbered_list",
-                description="在幻灯片中添加编号列表",
+                description="Add a numbered list to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "items": {
                             "type": "array",
                             "items": {"type": "string"},
-                            "description": "列表项内容"
+                            "description": "List items"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议列表位置：x=100-150，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for list: 100-150"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议列表位置：y=200-300，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for list: 200-300"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认18）"
+                            "description": "Font size (optional, default 18)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选）"
+                            "description": "Font name (optional)"
                         }
                     },
                     "required": ["slide_number", "items"]
@@ -182,33 +182,33 @@ class ContentTools:
             ),
             Tool(
                 name="add_code_block",
-                description="在幻灯片中添加代码块",
+                description="Add a code block to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "code": {
                             "type": "string",
-                            "description": "代码内容"
+                            "description": "Code content"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议代码块位置：x=100-200，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for code: 100-200"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议代码块位置：y=250-350，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for code: 250-350"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认14）"
+                            "description": "Font size (optional, default 14)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选，默认Monaco）"
+                            "description": "Font name (optional, default Monaco)"
                         }
                     },
                     "required": ["slide_number", "code"]
@@ -216,33 +216,33 @@ class ContentTools:
             ),
             Tool(
                 name="add_quote",
-                description="在幻灯片中添加引用文本",
+                description="Add a quote to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "quote": {
                             "type": "string",
-                            "description": "引用内容"
+                            "description": "Quote text"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议引用位置：x=150-250，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for quote: 150-250"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议引用位置：y=300-400，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for quote: 300-400"
                         },
                         "font_size": {
                             "type": "number",
-                            "description": "字体大小（可选，默认20）"
+                            "description": "Font size (optional, default 20)"
                         },
                         "font_name": {
                             "type": "string",
-                            "description": "字体名称（可选）"
+                            "description": "Font name (optional)"
                         }
                     },
                     "required": ["slide_number", "quote"]
@@ -250,25 +250,25 @@ class ContentTools:
             ),
             Tool(
                 name="add_image",
-                description="在幻灯片中添加图片",
+                description="Add an image to a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "image_path": {
                             "type": "string",
-                            "description": "图片文件路径"
+                            "description": "Path to the image file"
                         },
                         "x": {
                             "type": "number",
-                            "description": "X坐标（像素，可选）- 左上角为原点(0,0)，向右为正。建议图片位置：x=400-600，避免重叠请使用不同坐标"
+                            "description": "X coordinate in pixels (optional). Suggested for image: 400-600"
                         },
                         "y": {
                             "type": "number",
-                            "description": "Y坐标（像素，可选）- 左上角为原点(0,0)，向下为正。建议图片位置：y=200-400，避免重叠请使用不同坐标"
+                            "description": "Y coordinate in pixels (optional). Suggested for image: 200-400"
                         }
                     },
                     "required": ["slide_number", "image_path"]

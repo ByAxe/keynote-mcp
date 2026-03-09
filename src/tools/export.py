@@ -18,21 +18,21 @@ class ExportTools:
         return [
             Tool(
                 name="screenshot_slide",
-                description="截图单个幻灯片",
+                description="Take a screenshot of a single slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "output_path": {
                             "type": "string",
-                            "description": "输出文件路径"
+                            "description": "Output file path"
                         },
                         "format": {
                             "type": "string",
-                            "description": "图片格式（png/jpg，默认png）"
+                            "description": "Image format (png/jpg, default: png)"
                         }
                     },
                     "required": ["slide_number", "output_path"]
@@ -40,13 +40,13 @@ class ExportTools:
             ),
             Tool(
                 name="export_pdf",
-                description="导出演示文稿为PDF",
+                description="Export presentation as PDF",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "output_path": {
                             "type": "string",
-                            "description": "输出文件路径"
+                            "description": "Output file path"
                         }
                     },
                     "required": ["output_path"]

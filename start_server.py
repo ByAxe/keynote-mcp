@@ -12,11 +12,21 @@ project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
 def select_language():
-    """选择语言"""
+    """Select language from KEYNOTE_LANG env var (en/zh), defaulting to en.
+    Falls back to interactive prompt only when stdin is a TTY."""
+    lang = os.environ.get("KEYNOTE_LANG", "").lower()
+    if lang in ("en", "zh"):
+        return lang
+
+    # Non-interactive (MCP stdio mode) — default to English
+    if not sys.stdin.isatty():
+        return "en"
+
+    # Interactive terminal — prompt the user
     print("Please select your language / 请选择您的语言:")
     print("1. English")
     print("2. 中文")
-    
+
     while True:
         try:
             choice = input("Enter your choice (1 or 2) / 请输入您的选择 (1 或 2): ").strip()
@@ -103,8 +113,7 @@ if __name__ == "__main__":
     print("=" * 50)
     
     try:
-        import asyncio
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
         print(messages['server_stopped'])
     except Exception as e:

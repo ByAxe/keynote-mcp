@@ -11,8 +11,6 @@ from typing import Any, Sequence
 
 from mcp.server import Server
 from mcp.types import (
-    CallToolRequest,
-    ListToolsRequest,
     Tool,
     TextContent,
     ImageContent,
@@ -233,12 +231,6 @@ class KeynoteMCPServer:
                     return await self.export_tools.export_pdf(
                         output_path=arguments["output_path"]
                     )
-                elif name == "export_images":
-                    return await self.export_tools.export_images(
-                        output_dir=arguments["output_dir"],
-                        format=arguments.get("format", "png")
-                    )
-                
                 # Unsplash配图工具
                 elif name == "search_unsplash_images":
                     if not self.unsplash_tools:
@@ -326,11 +318,16 @@ class KeynoteMCPServer:
             )
 
 
-async def main():
-    """主函数"""
+async def _async_main():
+    """Async entry point."""
     server = KeynoteMCPServer()
     await server.run()
 
 
+def main():
+    """Sync entry point for console_scripts."""
+    asyncio.run(_async_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    main() 

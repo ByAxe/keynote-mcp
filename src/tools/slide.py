@@ -18,38 +18,38 @@ class SlideTools:
         return [
             Tool(
                 name="add_slide",
-                description="添加新幻灯片",
+                description="Add a new slide to the presentation",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "position": {
                             "type": "integer",
-                            "description": "插入位置（可选，0表示在末尾添加）"
+                            "description": "Insert position (optional, 0 = append at end)"
                         },
                         "layout": {
                             "type": "string",
-                            "description": "布局类型（可选）"
+                            "description": "Layout type (optional)"
                         }
                     }
                 }
             ),
             Tool(
                 name="delete_slide",
-                description="删除幻灯片",
+                description="Delete a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "slide_number": {
                             "type": "integer",
-                            "description": "要删除的幻灯片编号"
+                            "description": "Slide number to delete"
                         }
                     },
                     "required": ["slide_number"]
@@ -57,21 +57,21 @@ class SlideTools:
             ),
             Tool(
                 name="duplicate_slide",
-                description="复制幻灯片",
+                description="Duplicate a slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "slide_number": {
                             "type": "integer",
-                            "description": "要复制的幻灯片编号"
+                            "description": "Slide number to duplicate"
                         },
                         "new_position": {
                             "type": "integer",
-                            "description": "新位置（可选，0表示在末尾添加）"
+                            "description": "New position (optional, 0 = append at end)"
                         }
                     },
                     "required": ["slide_number"]
@@ -79,21 +79,21 @@ class SlideTools:
             ),
             Tool(
                 name="move_slide",
-                description="移动幻灯片位置",
+                description="Move a slide to a different position",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "from_position": {
                             "type": "integer",
-                            "description": "原位置"
+                            "description": "Source position"
                         },
                         "to_position": {
                             "type": "integer",
-                            "description": "目标位置"
+                            "description": "Target position"
                         }
                     },
                     "required": ["from_position", "to_position"]
@@ -101,30 +101,30 @@ class SlideTools:
             ),
             Tool(
                 name="get_slide_count",
-                description="获取幻灯片数量",
+                description="Get slide count",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }
             ),
             Tool(
                 name="select_slide",
-                description="选择指定幻灯片",
+                description="Select a specific slide",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         }
                     },
                     "required": ["slide_number"]
@@ -132,21 +132,21 @@ class SlideTools:
             ),
             Tool(
                 name="set_slide_layout",
-                description="设置幻灯片布局",
+                description="Set slide layout",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         },
                         "layout": {
                             "type": "string",
-                            "description": "布局类型"
+                            "description": "Layout type"
                         }
                     },
                     "required": ["slide_number", "layout"]
@@ -154,17 +154,17 @@ class SlideTools:
             ),
             Tool(
                 name="get_slide_info",
-                description="获取幻灯片信息",
+                description="Get slide info (number, layout, text item count)",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         },
                         "slide_number": {
                             "type": "integer",
-                            "description": "幻灯片编号"
+                            "description": "Slide number"
                         }
                     },
                     "required": ["slide_number"]
@@ -172,13 +172,13 @@ class SlideTools:
             ),
             Tool(
                 name="get_available_layouts",
-                description="获取可用布局列表",
+                description="Get list of available slide layouts",
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "doc_name": {
                             "type": "string",
-                            "description": "文档名称（可选，默认为当前文档）"
+                            "description": "Document name (optional, defaults to front document)"
                         }
                     }
                 }
