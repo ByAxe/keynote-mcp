@@ -1,5 +1,5 @@
 """
-Unsplash配图工具
+Unsplash image tools
 """
 
 import os
@@ -13,17 +13,17 @@ from ..utils import AppleScriptRunner, validate_slide_number, ParameterError
 
 
 class UnsplashTools:
-    """Unsplash配图工具类"""
+    """Unsplash image tools class"""
     
     def __init__(self):
         self.runner = AppleScriptRunner()
         
-        # 尝试加载 .env 文件
+        # Try to load .env file
         self._load_env_if_needed()
         
         self.api_key = os.getenv('UNSPLASH_KEY')
         if not self.api_key:
-            raise ParameterError("环境变量 UNSPLASH_KEY 未设置，请检查 .env 文件或系统环境变量")
+            raise ParameterError("UNSPLASH_KEY environment variable not set. Check .env file or system environment variables")
         
         self.base_url = "https://api.unsplash.com"
         self.headers = {
@@ -32,11 +32,11 @@ class UnsplashTools:
         }
     
     def _load_env_if_needed(self):
-        """如果需要，加载 .env 文件"""
+        """Load .env file if needed"""
         try:
             from dotenv import load_dotenv
             
-            # 查找项目根目录的 .env 文件
+            # Find .env file in project root
             current_dir = Path(__file__).parent
             while current_dir != current_dir.parent:
                 env_path = current_dir / '.env'
@@ -45,11 +45,11 @@ class UnsplashTools:
                     break
                 current_dir = current_dir.parent
         except ImportError:
-            # python-dotenv 未安装，忽略
+            # python-dotenv not installed, ignore
             pass
     
     def get_tools(self) -> List[Tool]:
-        """获取所有Unsplash配图工具"""
+        """Get all Unsplash image tools"""
         return [
             Tool(
                 name="search_unsplash_images",
@@ -168,7 +168,7 @@ class UnsplashTools:
         ]
     
     async def search_unsplash_images(self, query: str, per_page: int = 10, orientation: Optional[str] = None, order_by: str = "relevant") -> List[TextContent]:
-        """搜索Unsplash图片"""
+        """Search Unsplash images"""
         try:
             params = {
                 "query": query,
@@ -189,7 +189,7 @@ class UnsplashTools:
                         error_text = await response.text()
                         return [TextContent(
                             type="text",
-                            text=f"❌ Unsplash API错误 ({response.status}): {error_text}"
+                            text=f"❌ Unsplash API error ({response.status}): {error_text}"
                         )]
                     
                     data = await response.json()
@@ -198,24 +198,24 @@ class UnsplashTools:
                     if not photos:
                         return [TextContent(
                             type="text",
-                            text=f"❌ 没有找到关键词 '{query}' 的图片"
+                            text=f"❌ No images found for '{query}'"
                         )]
                     
-                    # 格式化搜索结果
-                    result_text = f"🔍 找到 {len(photos)} 张图片（关键词：{query}）:\n\n"
+                    # Format search results
+                    result_text = f"🔍 Found {len(photos)} images for '{query}':\n\n"
                     
                     for i, photo in enumerate(photos):
                         photographer = photo.get("user", {}).get("name", "Unknown")
-                        description = photo.get("description") or photo.get("alt_description") or "无描述"
+                        description = photo.get("description") or photo.get("alt_description") or "No description"
                         width = photo.get("width", 0)
                         height = photo.get("height", 0)
                         likes = photo.get("likes", 0)
                         
                         result_text += f"[{i}] 📸 {description[:50]}{'...' if len(description) > 50 else ''}\n"
-                        result_text += f"    👤 摄影师: {photographer}\n"
-                        result_text += f"    📐 尺寸: {width}x{height}\n"
-                        result_text += f"    ❤️ 点赞: {likes}\n"
-                        result_text += f"    🔗 链接: {photo.get('links', {}).get('html', '')}\n\n"
+                        result_text += f"    👤 Photographer: {photographer}\n"
+                        result_text += f"    📐 Size: {width}x{height}\n"
+                        result_text += f"    ❤️ Likes: {likes}\n"
+                        result_text += f"    🔗 Link: {photo.get('links', {}).get('html', '')}\n\n"
                     
                     return [TextContent(
                         type="text",
@@ -225,18 +225,18 @@ class UnsplashTools:
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 搜索图片失败: {str(e)}"
+                text=f"❌ Image search failed: {str(e)}"
             )]
     
     async def add_unsplash_image_to_slide(self, slide_number: int, query: str, image_index: int = 0, 
                                         orientation: Optional[str] = None, x: Optional[float] = None, 
                                         y: Optional[float] = None, width: Optional[float] = None, 
                                         height: Optional[float] = None) -> List[TextContent]:
-        """搜索Unsplash图片并添加到幻灯片"""
+        """Search Unsplash images and add to slide"""
         try:
             validate_slide_number(slide_number)
             
-            # 搜索图片
+            # Search images
             params = {
                 "query": query,
                 "per_page": max(image_index + 1, 10),
@@ -256,7 +256,7 @@ class UnsplashTools:
                         error_text = await response.text()
                         return [TextContent(
                             type="text",
-                            text=f"❌ Unsplash API错误 ({response.status}): {error_text}"
+                            text=f"❌ Unsplash API error ({response.status}): {error_text}"
                         )]
                     
                     data = await response.json()
@@ -265,23 +265,23 @@ class UnsplashTools:
                     if not photos:
                         return [TextContent(
                             type="text",
-                            text=f"❌ 没有找到关键词 '{query}' 的图片"
+                            text=f"❌ No images found for '{query}'"
                         )]
                     
                     if image_index >= len(photos):
                         return [TextContent(
                             type="text",
-                            text=f"❌ 图片索引 {image_index} 超出范围，共找到 {len(photos)} 张图片"
+                            text=f"❌ Image index {image_index} out of range, found {len(photos)} images"
                         )]
                     
-                    # 选择指定索引的图片
+                    # Select image at specified index
                     selected_photo = photos[image_index]
                     
-                    # 获取图片信息
+                    # Get image info
                     photographer = selected_photo.get("user", {}).get("name", "Unknown")
-                    description = selected_photo.get("description") or selected_photo.get("alt_description") or "无描述"
-                    
-                    # 选择合适的图片尺寸（优先使用regular尺寸）
+                    description = selected_photo.get("description") or selected_photo.get("alt_description") or "No description"
+
+                    # Select appropriate image size (prefer regular)
                     image_url = selected_photo.get("urls", {}).get("regular")
                     if not image_url:
                         image_url = selected_photo.get("urls", {}).get("full")
@@ -289,10 +289,10 @@ class UnsplashTools:
                     if not image_url:
                         return [TextContent(
                             type="text",
-                            text="❌ 无法获取图片下载链接"
+                            text="❌ Unable to get image download URL"
                         )]
                     
-                    # 下载图片
+                    # Download image
                     temp_dir = tempfile.gettempdir()
                     image_filename = f"unsplash_{selected_photo.get('id', 'unknown')}.jpg"
                     image_path = os.path.join(temp_dir, image_filename)
@@ -301,44 +301,44 @@ class UnsplashTools:
                         if img_response.status != 200:
                             return [TextContent(
                                 type="text",
-                                text=f"❌ 下载图片失败: HTTP {img_response.status}"
+                                text=f"❌ Image download failed: HTTP {img_response.status}"
                             )]
                         
                         async with aiofiles.open(image_path, 'wb') as f:
                             async for chunk in img_response.content.iter_chunked(8192):
                                 await f.write(chunk)
                     
-                    # 添加图片到幻灯片
+                    # Add image to slide
                     await self._add_image_to_slide(slide_number, image_path, x, y, width, height)
-                    
-                    # 记录下载统计（按照Unsplash API要求）
+
+                    # Record download stats (per Unsplash API requirements)
                     download_url = selected_photo.get("links", {}).get("download_location")
                     if download_url:
                         try:
                             async with session.get(download_url, headers=self.headers) as _:
-                                pass  # 只需要触发下载统计
+                                pass  # Just trigger the download stat
                         except:
-                            pass  # 忽略统计错误
+                            pass  # Ignore stats errors
                     
                     return [TextContent(
                         type="text",
-                        text=f"✅ 成功添加图片到幻灯片 {slide_number}\n"
-                             f"📸 图片: {description[:50]}{'...' if len(description) > 50 else ''}\n"
-                             f"👤 摄影师: {photographer}\n"
-                             f"📁 临时文件: {image_path}"
+                        text=f"✅ Successfully added image to slide {slide_number}\n"
+                             f"📸 Image: {description[:50]}{'...' if len(description) > 50 else ''}\n"
+                             f"👤 Photographer: {photographer}\n"
+                             f"📁 Temp file: {image_path}"
                     )]
                     
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加图片失败: {str(e)}"
+                text=f"❌ Failed to add image: {str(e)}"
             )]
     
     async def get_random_unsplash_image(self, slide_number: int, query: Optional[str] = None, 
                                       orientation: Optional[str] = None, x: Optional[float] = None, 
                                       y: Optional[float] = None, width: Optional[float] = None, 
                                       height: Optional[float] = None) -> List[TextContent]:
-        """获取随机Unsplash图片并添加到幻灯片"""
+        """Get a random Unsplash image and add to slide"""
         try:
             validate_slide_number(slide_number)
             
@@ -358,16 +358,16 @@ class UnsplashTools:
                         error_text = await response.text()
                         return [TextContent(
                             type="text",
-                            text=f"❌ Unsplash API错误 ({response.status}): {error_text}"
+                            text=f"❌ Unsplash API error ({response.status}): {error_text}"
                         )]
                     
                     photo = await response.json()
                     
-                    # 获取图片信息
+                    # Get image info
                     photographer = photo.get("user", {}).get("name", "Unknown")
-                    description = photo.get("description") or photo.get("alt_description") or "无描述"
-                    
-                    # 选择合适的图片尺寸
+                    description = photo.get("description") or photo.get("alt_description") or "No description"
+
+                    # Select appropriate image size
                     image_url = photo.get("urls", {}).get("regular")
                     if not image_url:
                         image_url = photo.get("urls", {}).get("full")
@@ -375,10 +375,10 @@ class UnsplashTools:
                     if not image_url:
                         return [TextContent(
                             type="text",
-                            text="❌ 无法获取图片下载链接"
+                            text="❌ Unable to get image download URL"
                         )]
                     
-                    # 下载图片
+                    # Download image
                     temp_dir = tempfile.gettempdir()
                     image_filename = f"unsplash_random_{photo.get('id', 'unknown')}.jpg"
                     image_path = os.path.join(temp_dir, image_filename)
@@ -387,17 +387,17 @@ class UnsplashTools:
                         if img_response.status != 200:
                             return [TextContent(
                                 type="text",
-                                text=f"❌ 下载图片失败: HTTP {img_response.status}"
+                                text=f"❌ Image download failed: HTTP {img_response.status}"
                             )]
                         
                         async with aiofiles.open(image_path, 'wb') as f:
                             async for chunk in img_response.content.iter_chunked(8192):
                                 await f.write(chunk)
                     
-                    # 添加图片到幻灯片
+                    # Add image to slide
                     await self._add_image_to_slide(slide_number, image_path, x, y, width, height)
-                    
-                    # 记录下载统计
+
+                    # Record download stats
                     download_url = photo.get("links", {}).get("download_location")
                     if download_url:
                         try:
@@ -408,30 +408,30 @@ class UnsplashTools:
                     
                     return [TextContent(
                         type="text",
-                        text=f"✅ 成功添加随机图片到幻灯片 {slide_number}\n"
-                             f"📸 图片: {description[:50]}{'...' if len(description) > 50 else ''}\n"
-                             f"👤 摄影师: {photographer}\n"
-                             f"📁 临时文件: {image_path}"
+                        text=f"✅ Successfully added random image to slide {slide_number}\n"
+                             f"📸 Image: {description[:50]}{'...' if len(description) > 50 else ''}\n"
+                             f"👤 Photographer: {photographer}\n"
+                             f"📁 Temp file: {image_path}"
                     )]
                     
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 获取随机图片失败: {str(e)}"
+                text=f"❌ Failed to get random image: {str(e)}"
             )]
     
     async def _add_image_to_slide(self, slide_number: int, image_path: str, x: Optional[int] = None, y: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None) -> None:
-        """添加图片到指定幻灯片"""
+        """Add image to specified slide"""
         try:
-            # 转换为绝对路径
+            # Convert to absolute path
             abs_path = os.path.abspath(image_path)
             
-            # 构建位置参数
+            # Build position parameters
             position_params = ""
             if x is not None and y is not None:
                 position_params = f", position:{{{x}, {y}}}"
             
-            # 使用修正后的AppleScript语法（基于独立脚本中成功的实现）
+            # Use corrected AppleScript syntax (based on working standalone script)
             script = f'''
             tell application "Keynote"
                 activate
@@ -439,20 +439,20 @@ class UnsplashTools:
                 
                 tell targetDoc
                     tell slide {slide_number}
-                        -- 使用修正后的语法
+                        -- Use corrected syntax
                         set imageFile to POSIX file "{abs_path}" as alias
                         
-                        -- 方法1: 尝试标准image对象
+                        -- Method 1: Try standard image object
                         try
                             set newImage to make new image with properties {{file:imageFile{position_params}}}
                             return "image_success"
                         on error
-                            -- 方法2: 尝试movie对象
+                            -- Method 2: Try movie object
                             try
                                 set newMovie to make new movie with properties {{file:imageFile{position_params}}}
                                 return "movie_success"
                             on error
-                                -- 方法3: 使用剪贴板方法
+                                -- Method 3: Use clipboard method
                                 try
                                     tell application "Finder"
                                         select imageFile
@@ -464,7 +464,7 @@ class UnsplashTools:
                                     
                                     return "clipboard_success"
                                 on error
-                                    error "所有图片添加方法都失败"
+                                    error "All image insertion methods failed"
                                 end try
                             end try
                         end try
@@ -473,9 +473,9 @@ class UnsplashTools:
             end tell
             '''
             
-            # 执行AppleScript
+            # Execute AppleScript
             result = self.runner.run_inline_script(script)
             
         except Exception as e:
-            error_msg = f"添加图片到幻灯片失败: {e}"
+            error_msg = f"Failed to add image to slide: {e}"
             raise Exception(error_msg) 

@@ -1,20 +1,20 @@
 """
-内容管理工具
+Content management tools
 """
 
 from typing import Any, Dict, List, Optional
 from mcp.types import Tool, TextContent
-from ..utils import AppleScriptRunner, validate_slide_number, validate_coordinates, validate_file_path, ParameterError
+from ..utils import AppleScriptRunner, validate_slide_number, validate_coordinates, validate_file_path, validate_element_type, validate_dimensions, ParameterError
 
 
 class ContentTools:
-    """内容管理工具类"""
+    """Content management tools class"""
     
     def __init__(self):
         self.runner = AppleScriptRunner()
     
     def get_tools(self) -> List[Tool]:
-        """获取所有内容管理工具"""
+        """Get all content management tools"""
         return [
             Tool(
                 name="add_text_box",
@@ -273,19 +273,200 @@ class ContentTools:
                     },
                     "required": ["slide_number", "image_path"]
                 }
+            ),
+            Tool(
+                name="get_slide_content",
+                description="Get all elements on a slide — returns counts and details for text items, images, shapes, and tables",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number"]
+                }
+            ),
+            Tool(
+                name="edit_text_item",
+                description="Edit a text item's content by index on a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "item_index": {
+                            "type": "integer",
+                            "description": "Text item index (1-based)"
+                        },
+                        "new_text": {
+                            "type": "string",
+                            "description": "New text content"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "item_index", "new_text"]
+                }
+            ),
+            Tool(
+                name="delete_element",
+                description="Delete an element by type and index from a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, shape, or table",
+                            "enum": ["text", "image", "shape", "table"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index"]
+                }
+            ),
+            Tool(
+                name="move_element",
+                description="Move an element to new coordinates on a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, shape, or table",
+                            "enum": ["text", "image", "shape", "table"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        },
+                        "x": {
+                            "type": "number",
+                            "description": "New X coordinate in pixels"
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "New Y coordinate in pixels"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index", "x", "y"]
+                }
+            ),
+            Tool(
+                name="resize_element",
+                description="Resize an element on a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, shape, or table",
+                            "enum": ["text", "image", "shape", "table"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        },
+                        "width": {
+                            "type": "number",
+                            "description": "New width in pixels"
+                        },
+                        "height": {
+                            "type": "number",
+                            "description": "New height in pixels"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index", "width", "height"]
+                }
+            ),
+            Tool(
+                name="get_speaker_notes",
+                description="Get presenter notes from a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number"]
+                }
+            ),
+            Tool(
+                name="set_speaker_notes",
+                description="Set presenter notes on a slide",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "notes": {
+                            "type": "string",
+                            "description": "Notes text"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "notes"]
+                }
             )
         ]
     
     async def add_text_box(self, slide_number: int, text: str, x: Optional[float] = None, y: Optional[float] = None, doc_name: str = "") -> List[TextContent]:
-        """添加文本框"""
+        """Add text box"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 处理文本中的引号
+
+            # Escape quotes in text
             escaped_text = text.replace('"', '\\"')
-            
-            # 使用内联脚本，语法正确
+
+            # Use inline script with correct syntax
             result = self.runner.run_inline_script(f'''
                 tell application "Keynote"
                     activate
@@ -297,10 +478,10 @@ class ContentTools:
                     
                     tell targetDoc
                         tell slide {slide_number}
-                            -- 创建文本框
+                            -- Create text box
                             set newTextBox to make new text item with properties {{object text:"{escaped_text}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newTextBox to {{{x_pos}, {y_pos}}}"}
                         end tell
                     end tell
@@ -311,26 +492,26 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加文本框"
+                text=f"✅ Added text box to slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加文本框失败: {str(e)}"
+                text=f"❌ Failed to add text box: {str(e)}"
             )]
     
     async def add_title(self, slide_number: int, title: str, x: Optional[float] = None, y: Optional[float] = None, 
                        font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加标题"""
+        """Add title"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 处理文本中的引号
+
+            # Escape quotes in text
             escaped_title = title.replace('"', '\\"')
-            
-            # 构建字体设置命令
+
+            # Build font setting command
             font_command = f'set font of object text to "{font_name}"' if font_name else ""
             
             result = self.runner.run_inline_script(f'''
@@ -346,7 +527,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newTitle to make new text item with properties {{object text:"{escaped_title}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newTitle to {{{x_pos}, {y_pos}}}"}
                             
                             tell newTitle
@@ -362,26 +543,26 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加标题"
+                text=f"✅ Added title to slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加标题失败: {str(e)}"
+                text=f"❌ Failed to add title: {str(e)}"
             )]
     
     async def add_subtitle(self, slide_number: int, subtitle: str, x: Optional[float] = None, y: Optional[float] = None, 
                           font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加副标题"""
+        """Add subtitle"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 处理文本中的引号
+
+            # Escape quotes in text
             escaped_subtitle = subtitle.replace('"', '\\"')
-            
-            # 构建字体设置命令
+
+            # Build font setting command
             font_command = f'set font of object text to "{font_name}"' if font_name else ""
             
             result = self.runner.run_inline_script(f'''
@@ -397,7 +578,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newSubtitle to make new text item with properties {{object text:"{escaped_subtitle}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newSubtitle to {{{x_pos}, {y_pos}}}"}
                             
                             tell newSubtitle
@@ -413,23 +594,23 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加副标题"
+                text=f"✅ Added subtitle to slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加副标题失败: {str(e)}"
+                text=f"❌ Failed to add subtitle: {str(e)}"
             )]
     
     async def add_bullet_list(self, slide_number: int, items: List[str], x: Optional[float] = None, y: Optional[float] = None, 
                              font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加项目符号列表"""
+        """Add bullet list"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 构建列表文本
+
+            # Build list text
             list_text = ""
             for i, item in enumerate(items):
                 escaped_item = item.replace('"', '\\"')
@@ -437,7 +618,7 @@ class ContentTools:
                 if i < len(items) - 1:
                     list_text += "\\n"
             
-            # 构建字体设置命令
+            # Build font setting command
             font_command = f'set font of object text to "{font_name}"' if font_name else ""
             
             result = self.runner.run_inline_script(f'''
@@ -453,7 +634,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newList to make new text item with properties {{object text:"{list_text}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newList to {{{x_pos}, {y_pos}}}"}
                             
                             tell newList
@@ -469,23 +650,23 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加项目符号列表（{len(items)} 项）"
+                text=f"✅ Added bullet list to slide {slide_number} ({len(items)} items)"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加项目符号列表失败: {str(e)}"
+                text=f"❌ Failed to add bullet list: {str(e)}"
             )]
     
     async def add_numbered_list(self, slide_number: int, items: List[str], x: Optional[float] = None, y: Optional[float] = None, 
                                font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加编号列表"""
+        """Add numbered list"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 构建编号列表文本
+
+            # Build numbered list text
             list_text = ""
             for i, item in enumerate(items):
                 escaped_item = item.replace('"', '\\"')
@@ -493,7 +674,7 @@ class ContentTools:
                 if i < len(items) - 1:
                     list_text += "\\n"
             
-            # 构建字体设置命令
+            # Build font setting command
             font_command = f'set font of object text to "{font_name}"' if font_name else ""
             
             result = self.runner.run_inline_script(f'''
@@ -509,7 +690,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newList to make new text item with properties {{object text:"{list_text}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newList to {{{x_pos}, {y_pos}}}"}
                             
                             tell newList
@@ -525,23 +706,23 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加编号列表（{len(items)} 项）"
+                text=f"✅ Added numbered list to slide {slide_number} ({len(items)} items)"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加编号列表失败: {str(e)}"
+                text=f"❌ Failed to add numbered list: {str(e)}"
             )]
     
     async def add_code_block(self, slide_number: int, code: str, x: Optional[float] = None, y: Optional[float] = None, 
                             font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加代码块"""
+        """Add code block"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 处理代码中的引号和换行
+
+            # Escape quotes and newlines in code
             escaped_code = code.replace('"', '\\"').replace('\n', '\\n')
             
             result = self.runner.run_inline_script(f'''
@@ -557,7 +738,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newCodeBlock to make new text item with properties {{object text:"{escaped_code}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newCodeBlock to {{{x_pos}, {y_pos}}}"}
                             
                             tell newCodeBlock
@@ -573,28 +754,28 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加代码块"
+                text=f"✅ Added code block to slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加代码块失败: {str(e)}"
+                text=f"❌ Failed to add code block: {str(e)}"
             )]
     
     async def add_quote(self, slide_number: int, quote: str, x: Optional[float] = None, y: Optional[float] = None, 
                        font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
-        """添加引用文本"""
+        """Add quote"""
         try:
             validate_slide_number(slide_number)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 处理引用文本中的引号
+
+            # Escape quotes in quote text
             escaped_quote = quote.replace('"', '\\"')
-            # 使用单引号包围，避免嵌套引号问题
+            # Wrap in single quotes to avoid nested quote issues
             formatted_quote = f"'{escaped_quote}'"
             
-            # 构建字体设置命令
+            # Build font setting command
             font_command = f'set font of object text to "{font_name}"' if font_name else ""
             
             result = self.runner.run_inline_script(f'''
@@ -610,7 +791,7 @@ class ContentTools:
                         tell slide {slide_number}
                             set newQuote to make new text item with properties {{object text:"{formatted_quote}"}}
                             
-                            -- 设置位置（如果指定了x或y坐标）
+                            -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newQuote to {{{x_pos}, {y_pos}}}"}
                             
                             tell newQuote
@@ -626,60 +807,60 @@ class ContentTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加引用文本"
+                text=f"✅ Added quote to slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加引用文本失败: {str(e)}"
+                text=f"❌ Failed to add quote: {str(e)}"
             )]
     
     async def add_image(self, slide_number: int, image_path: str, x: Optional[float] = None, y: Optional[float] = None) -> List[TextContent]:
-        """添加图片"""
+        """Add image"""
         try:
             validate_slide_number(slide_number)
             validate_file_path(image_path)
             x_pos, y_pos = validate_coordinates(x, y)
-            
-            # 构建位置参数
+
+            # Build position parameters
             position_params = ""
             if x is not None and y is not None:
                 position_params = f", position:{{{x_pos}, {y_pos}}}"
-            
+
             result = self.runner.run_inline_script(f'''
                 tell application "Keynote"
                     activate
                     set targetDoc to front document
-                    
+
                     tell targetDoc
                         tell slide {slide_number}
-                            -- 使用正确的alias语法
+                            -- Use correct alias syntax
                             set imageFile to POSIX file "{image_path}" as alias
-                            
-                            -- 方法1: 尝试标准image对象
+
+                            -- Method 1: Try standard image object
                             try
                                 set newImage to make new image with properties {{file:imageFile{position_params}}}
                                 return "image_success"
                             on error
-                                -- 方法2: 尝试movie对象（适用于某些Keynote版本）
+                                -- Method 2: Try movie object (works in some Keynote versions)
                                 try
                                     set newMovie to make new movie with properties {{file:imageFile{position_params}}}
                                     return "movie_success"
                                 on error
-                                    -- 方法3: 使用剪贴板方法
+                                    -- Method 3: Use clipboard method
                                     try
                                         tell application "Finder"
                                             select imageFile
                                             copy selection
                                         end tell
-                                        
+
                                         delay 0.5
                                         paste
-                                        
+
                                         return "clipboard_success"
                                     on error
-                                        error "所有图片添加方法都失败"
+                                        error "All image insertion methods failed"
                                     end try
                                 end try
                             end try
@@ -687,14 +868,198 @@ class ContentTools:
                     end tell
                 end tell
             ''')
-            
+
             return [TextContent(
                 type="text",
-                text=f"✅ 成功在幻灯片 {slide_number} 添加图片 (方法: {result})"
+                text=f"✅ Added image to slide {slide_number} (method: {result})"
             )]
-            
+
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加图片失败: {str(e)}"
-            )] 
+                text=f"❌ Failed to add image: {str(e)}"
+            )]
+
+    # --- Read / Edit / Delete tools ---
+
+    _ELEMENT_TYPE_MAP = {
+        "text": "text item",
+        "image": "image",
+        "shape": "shape",
+        "table": "table",
+    }
+
+    def _doc_tell(self, doc_name: str) -> str:
+        """Return AppleScript fragment to target a document."""
+        return (
+            f'set targetDoc to document "{doc_name}"'
+            if doc_name
+            else "set targetDoc to front document"
+        )
+
+    async def get_slide_content(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
+        """Get all elements on a slide."""
+        try:
+            validate_slide_number(slide_number)
+            result = self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set textCount to count of text items
+                        set imageCount to count of images
+                        set shapeCount to count of shapes
+                        set tableCount to count of tables
+
+                        set output to "text_items:" & textCount & "|images:" & imageCount & "|shapes:" & shapeCount & "|tables:" & tableCount
+
+                        repeat with i from 1 to textCount
+                            set ti to text item i
+                            set txt to object text of ti
+                            set pos to position of ti
+                            set w to width of ti
+                            set h to height of ti
+                            set output to output & "|||TEXT:" & i & ":::" & txt & ":::" & (item 1 of pos) & "," & (item 2 of pos) & ":::" & w & "," & h
+                        end repeat
+
+                        repeat with i from 1 to imageCount
+                            set img to image i
+                            set pos to position of img
+                            set w to width of img
+                            set h to height of img
+                            set output to output & "|||IMAGE:" & i & ":::" & (item 1 of pos) & "," & (item 2 of pos) & ":::" & w & "," & h
+                        end repeat
+
+                        repeat with i from 1 to shapeCount
+                            set sh to shape i
+                            set pos to position of sh
+                            set w to width of sh
+                            set h to height of sh
+                            set output to output & "|||SHAPE:" & i & ":::" & (item 1 of pos) & "," & (item 2 of pos) & ":::" & w & "," & h
+                        end repeat
+
+                        repeat with i from 1 to tableCount
+                            set tb to table i
+                            set pos to position of tb
+                            set w to width of tb
+                            set h to height of tb
+                            set output to output & "|||TABLE:" & i & ":::" & (item 1 of pos) & "," & (item 2 of pos) & ":::" & w & "," & h
+                        end repeat
+
+                        return output
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=result)]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to get slide content: {str(e)}")]
+
+    async def edit_text_item(self, slide_number: int, item_index: int, new_text: str, doc_name: str = "") -> List[TextContent]:
+        """Edit a text item's content by index."""
+        try:
+            validate_slide_number(slide_number)
+            if not isinstance(item_index, int) or item_index < 1:
+                raise ParameterError(f"Invalid item_index: {item_index}. Must be a positive integer.")
+            escaped_text = new_text.replace('"', '\\"')
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set object text of text item {item_index} to "{escaped_text}"
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Text item {item_index} on slide {slide_number} updated.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to edit text item: {str(e)}")]
+
+    async def delete_element(self, slide_number: int, element_type: str, element_index: int, doc_name: str = "") -> List[TextContent]:
+        """Delete an element by type and index."""
+        try:
+            validate_slide_number(slide_number)
+            validate_element_type(element_type)
+            if not isinstance(element_index, int) or element_index < 1:
+                raise ParameterError(f"Invalid element_index: {element_index}. Must be a positive integer.")
+            as_type = self._ELEMENT_TYPE_MAP[element_type]
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        delete {as_type} {element_index}
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Deleted {element_type} {element_index} from slide {slide_number}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to delete element: {str(e)}")]
+
+    async def move_element(self, slide_number: int, element_type: str, element_index: int, x: float, y: float, doc_name: str = "") -> List[TextContent]:
+        """Move an element to new coordinates."""
+        try:
+            validate_slide_number(slide_number)
+            validate_element_type(element_type)
+            if not isinstance(element_index, int) or element_index < 1:
+                raise ParameterError(f"Invalid element_index: {element_index}. Must be a positive integer.")
+            x_pos, y_pos = validate_coordinates(x, y)
+            as_type = self._ELEMENT_TYPE_MAP[element_type]
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set position of {as_type} {element_index} to {{{x_pos}, {y_pos}}}
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Moved {element_type} {element_index} on slide {slide_number} to ({x_pos}, {y_pos}).")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to move element: {str(e)}")]
+
+    async def resize_element(self, slide_number: int, element_type: str, element_index: int, width: float, height: float, doc_name: str = "") -> List[TextContent]:
+        """Resize an element."""
+        try:
+            validate_slide_number(slide_number)
+            validate_element_type(element_type)
+            if not isinstance(element_index, int) or element_index < 1:
+                raise ParameterError(f"Invalid element_index: {element_index}. Must be a positive integer.")
+            w, h = validate_dimensions(width, height)
+            as_type = self._ELEMENT_TYPE_MAP[element_type]
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set width of {as_type} {element_index} to {w}
+                        set height of {as_type} {element_index} to {h}
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Resized {element_type} {element_index} on slide {slide_number} to {w}x{h}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to resize element: {str(e)}")]
+
+    async def get_speaker_notes(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
+        """Get presenter notes from a slide."""
+        try:
+            validate_slide_number(slide_number)
+            result = self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    return presenter notes of slide {slide_number} of targetDoc
+                end tell
+            ''')
+            return [TextContent(type="text", text=result)]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to get speaker notes: {str(e)}")]
+
+    async def set_speaker_notes(self, slide_number: int, notes: str, doc_name: str = "") -> List[TextContent]:
+        """Set presenter notes on a slide."""
+        try:
+            validate_slide_number(slide_number)
+            escaped_notes = notes.replace('"', '\\"')
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    set presenter notes of slide {slide_number} of targetDoc to "{escaped_notes}"
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Speaker notes set on slide {slide_number}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to set speaker notes: {str(e)}")] 

@@ -1,7 +1,7 @@
 -- presentation.applescript
--- 演示文稿管理脚本
+-- Presentation management script
 
--- 创建新演示文稿
+-- Create new presentation
 on createNewPresentation(presentationName, themeName)
     tell application "Keynote"
         activate
@@ -11,12 +11,12 @@ on createNewPresentation(presentationName, themeName)
             try
                 set theme of newDoc to theme themeName
             on error
-                -- 如果主题不存在，使用默认主题
+                -- If theme not found, use default theme
                 log "Theme " & themeName & " not found, using default theme"
             end try
         end if
         
-        -- 将第一页的布局设置为空白
+        -- Set the first slide layout to blank
         try
             set layoutType to "Blank"
             set base slide of slide 1 of newDoc to master slide layoutType of theme of newDoc
@@ -24,7 +24,7 @@ on createNewPresentation(presentationName, themeName)
             log "Failed to set blank layout for first slide"
         end try
         
-        -- 如果指定了名称，则保存到桌面
+        -- If a name is specified, save to desktop
         if presentationName is not "" then
             set desktopPath to (path to desktop as string) & presentationName & ".key"
             save newDoc in file desktopPath
@@ -34,7 +34,7 @@ on createNewPresentation(presentationName, themeName)
     end tell
 end createNewPresentation
 
--- 打开演示文稿
+-- Open presentation
 on openPresentation(filePath)
     tell application "Keynote"
         set targetFile to POSIX file filePath
@@ -43,7 +43,7 @@ on openPresentation(filePath)
     end tell
 end openPresentation
 
--- 保存演示文稿
+-- Save presentation
 on savePresentation(docName)
     tell application "Keynote"
         if docName is "" then
@@ -54,7 +54,7 @@ on savePresentation(docName)
     end tell
 end savePresentation
 
--- 另存为演示文稿
+-- Save presentation as
 on saveAsPresentation(docName, filePath)
     tell application "Keynote"
         if docName is "" then
@@ -68,7 +68,7 @@ on saveAsPresentation(docName, filePath)
     end tell
 end saveAsPresentation
 
--- 关闭演示文稿
+-- Close presentation
 on closePresentation(docName, shouldSave)
     tell application "Keynote"
         if docName is "" then
@@ -85,7 +85,7 @@ on closePresentation(docName, shouldSave)
     end tell
 end closePresentation
 
--- 获取演示文稿信息
+-- Get presentation info
 on getPresentationInfo(docName)
     tell application "Keynote"
         if docName is "" then
@@ -108,7 +108,7 @@ on getPresentationInfo(docName)
     end tell
 end getPresentationInfo
 
--- 设置演示文稿主题
+-- Set presentation theme
 on setPresentationTheme(docName, themeName)
     tell application "Keynote"
         if docName is "" then
@@ -126,7 +126,7 @@ on setPresentationTheme(docName, themeName)
     end tell
 end setPresentationTheme
 
--- 获取可用主题列表
+-- Get available themes list
 on getAvailableThemes()
     tell application "Keynote"
         set themeList to {}
@@ -137,7 +137,7 @@ on getAvailableThemes()
     end tell
 end getAvailableThemes
 
--- 复制演示文稿
+-- Duplicate presentation
 on duplicatePresentation(docName, newName)
     tell application "Keynote"
         if docName is "" then
@@ -155,7 +155,7 @@ on duplicatePresentation(docName, newName)
     end tell
 end duplicatePresentation
 
--- 获取演示文稿属性
+-- Get presentation properties
 on getPresentationProperties(docName)
     tell application "Keynote"
         if docName is "" then
@@ -186,7 +186,7 @@ on getPresentationProperties(docName)
     end tell
 end getPresentationProperties
 
--- 获取演示文稿分辨率
+-- Get presentation resolution
 on getPresentationResolution(docName)
     tell application "Keynote"
         if docName is "" then
@@ -198,7 +198,7 @@ on getPresentationResolution(docName)
         set resolution to {}
         
         try
-            -- 获取文档的宽度和高度
+            -- Get document width and height
             set docWidth to width of targetDoc
             set docHeight to height of targetDoc
             
@@ -207,7 +207,7 @@ on getPresentationResolution(docName)
             
             return resolution
         on error
-            -- 如果无法获取分辨率，返回标准16:9分辨率
+            -- If unable to get resolution, return standard 16:9 resolution
             set end of resolution to 1920
             set end of resolution to 1080
             return resolution
@@ -215,7 +215,7 @@ on getPresentationResolution(docName)
     end tell
 end getPresentationResolution
 
--- 获取幻灯片尺寸信息
+-- Get slide size info
 on getSlideSize(docName)
     tell application "Keynote"
         if docName is "" then
@@ -227,18 +227,18 @@ on getSlideSize(docName)
         set sizeInfo to {}
         
         try
-            -- 获取幻灯片尺寸
+            -- Get slide dimensions
             set slideWidth to width of targetDoc
             set slideHeight to height of targetDoc
             
-            -- 计算比例
+            -- Calculate aspect ratio
             set aspectRatio to slideWidth / slideHeight
             
             set end of sizeInfo to slideWidth
             set end of sizeInfo to slideHeight
             set end of sizeInfo to aspectRatio
             
-            -- 判断比例类型
+            -- Determine aspect ratio type
             if aspectRatio > 1.7 and aspectRatio < 1.8 then
                 set end of sizeInfo to "16:9"
             else if aspectRatio > 1.3 and aspectRatio < 1.4 then
@@ -249,7 +249,7 @@ on getSlideSize(docName)
             
             return sizeInfo
         on error
-            -- 返回默认值
+            -- Return default values
             set end of sizeInfo to 1920
             set end of sizeInfo to 1080
             set end of sizeInfo to 1.777

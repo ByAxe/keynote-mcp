@@ -7,59 +7,59 @@ from typing import Optional
 
 
 class KeynoteError(Exception):
-    """Keynote 操作基础异常"""
+    """Base exception for Keynote operations"""
     pass
 
 
 class AppleScriptError(KeynoteError):
-    """AppleScript 执行异常"""
+    """AppleScript execution error"""
     pass
 
 
 class FileOperationError(KeynoteError):
-    """文件操作异常"""
+    """File operation error"""
     pass
 
 
 class ParameterError(KeynoteError):
-    """参数验证异常"""
+    """Parameter validation error"""
     pass
 
 
 def handle_applescript_error(error_output: str) -> None:
-    """处理 AppleScript 错误输出"""
+    """Handle AppleScript error output"""
     if not error_output:
         return
     
     error_output = error_output.strip()
     
-    # Keynote 应用错误
+    # Keynote application error
     if "Keynote got an error" in error_output:
         raise AppleScriptError(f"Keynote error: {error_output}")
     
-    # 对象不存在错误
+    # Object not found error
     elif "Can't get" in error_output:
         raise AppleScriptError(f"Object not found: {error_output}")
     
-    # 权限错误
+    # Permission error
     elif "not allowed" in error_output or "permission" in error_output.lower():
         raise AppleScriptError(f"Permission denied: {error_output}")
     
-    # 文件操作错误
+    # File operation error
     elif "file" in error_output.lower() and ("not found" in error_output.lower() or "doesn't exist" in error_output.lower()):
         raise FileOperationError(f"File operation error: {error_output}")
     
-    # 语法错误
+    # Syntax error
     elif "syntax error" in error_output.lower():
         raise AppleScriptError(f"AppleScript syntax error: {error_output}")
     
-    # 其他错误
+    # Other errors
     else:
         raise AppleScriptError(f"Unknown AppleScript error: {error_output}")
 
 
 def validate_slide_number(slide_number: Optional[int], max_slides: Optional[int] = None) -> int:
-    """验证幻灯片编号"""
+    """Validate slide number"""
     if slide_number is None:
         raise ParameterError("Slide number is required")
     
@@ -73,7 +73,7 @@ def validate_slide_number(slide_number: Optional[int], max_slides: Optional[int]
 
 
 def validate_coordinates(x: Optional[float], y: Optional[float]) -> tuple[float, float]:
-    """验证坐标值"""
+    """Validate coordinate values"""
     if x is not None and (not isinstance(x, (int, float)) or x < 0):
         raise ParameterError(f"Invalid x coordinate: {x}")
     
@@ -84,12 +84,31 @@ def validate_coordinates(x: Optional[float], y: Optional[float]) -> tuple[float,
 
 
 def validate_file_path(file_path: str) -> str:
-    """验证文件路径"""
+    """Validate file path"""
     if not file_path or not isinstance(file_path, str):
         raise ParameterError("File path is required and must be a string")
     
-    # 基本路径验证
+    # Basic path validation
     if not file_path.strip():
         raise ParameterError("File path cannot be empty")
     
-    return file_path.strip() 
+    return file_path.strip()
+
+
+VALID_ELEMENT_TYPES = {"text", "image", "shape", "table"}
+
+
+def validate_element_type(element_type: str) -> str:
+    """Validate element type"""
+    if element_type not in VALID_ELEMENT_TYPES:
+        raise ParameterError(f"Invalid element type: {element_type}. Must be one of: {VALID_ELEMENT_TYPES}")
+    return element_type
+
+
+def validate_dimensions(width: float, height: float) -> tuple[float, float]:
+    """Validate width and height dimensions"""
+    if width is not None and (not isinstance(width, (int, float)) or width <= 0):
+        raise ParameterError(f"Invalid width: {width}. Must be positive.")
+    if height is not None and (not isinstance(height, (int, float)) or height <= 0):
+        raise ParameterError(f"Invalid height: {height}. Must be positive.")
+    return float(width) if width is not None else 0.0, float(height) if height is not None else 0.0

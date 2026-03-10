@@ -1,5 +1,5 @@
 """
-幻灯片操作工具
+Slide management tools
 """
 
 from typing import Any, Dict, List, Optional
@@ -8,13 +8,13 @@ from ..utils import AppleScriptRunner, validate_slide_number, ParameterError
 
 
 class SlideTools:
-    """幻灯片操作工具类"""
+    """Slide management tools class"""
     
     def __init__(self):
         self.runner = AppleScriptRunner()
     
     def get_tools(self) -> List[Tool]:
-        """获取所有幻灯片操作工具"""
+        """Get all slide management tools"""
         return [
             Tool(
                 name="add_slide",
@@ -186,9 +186,9 @@ class SlideTools:
         ]
     
     async def add_slide(self, doc_name: str = "", position: int = 0, layout: str = "", clear_default_content: bool = True) -> List[TextContent]:
-        """添加新幻灯片"""
+        """Add a new slide"""
         try:
-            # 如果启用清除默认内容且没有指定布局，使用 Blank 布局
+            # If clearing default content is enabled and no layout specified, use Blank layout
             if clear_default_content and layout == "":
                 layout = "Blank"
             
@@ -211,7 +211,7 @@ class SlideTools:
                         try
                             set base slide of newSlide to master slide "{layout}" of targetDoc
                         on error
-                            -- 如果布局不存在，尝试使用 Blank 布局
+                            -- If layout not found, try using Blank layout
                             try
                                 set base slide of newSlide to master slide "Blank" of targetDoc
                                 log "Layout {layout} not found, using Blank layout"
@@ -225,20 +225,20 @@ class SlideTools:
                 end tell
             ''')
             
-            layout_info = f" (布局: {layout})" if layout else " (默认布局)"
+            layout_info = f" (layout: {layout})" if layout else " (default layout)"
             return [TextContent(
                 type="text",
-                text=f"✅ 成功添加幻灯片，编号: {result}{layout_info}"
+                text=f"✅ Added slide #{result}{layout_info}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 添加幻灯片失败: {str(e)}"
+                text=f"❌ Failed to add slide: {str(e)}"
             )]
     
     async def delete_slide(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
-        """删除幻灯片"""
+        """Delete a slide"""
         try:
             validate_slide_number(slide_number)
             
@@ -256,17 +256,17 @@ class SlideTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功删除幻灯片 {slide_number}"
+                text=f"✅ Deleted slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 删除幻灯片失败: {str(e)}"
+                text=f"❌ Failed to delete slide: {str(e)}"
             )]
     
     async def duplicate_slide(self, slide_number: int, doc_name: str = "", new_position: int = 0) -> List[TextContent]:
-        """复制幻灯片"""
+        """Duplicate a slide"""
         try:
             validate_slide_number(slide_number)
             
@@ -291,17 +291,17 @@ class SlideTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功复制幻灯片，新编号: {result}"
+                text=f"✅ Duplicated slide, new number: {result}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 复制幻灯片失败: {str(e)}"
+                text=f"❌ Failed to duplicate slide: {str(e)}"
             )]
     
     async def move_slide(self, from_position: int, to_position: int, doc_name: str = "") -> List[TextContent]:
-        """移动幻灯片位置"""
+        """Move a slide to a different position"""
         try:
             validate_slide_number(from_position)
             validate_slide_number(to_position)
@@ -321,17 +321,17 @@ class SlideTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功移动幻灯片从位置 {from_position} 到位置 {to_position}"
+                text=f"✅ Moved slide from position {from_position} to position {to_position}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 移动幻灯片失败: {str(e)}"
+                text=f"❌ Failed to move slide: {str(e)}"
             )]
     
     async def get_slide_count(self, doc_name: str = "") -> List[TextContent]:
-        """获取幻灯片数量"""
+        """Get slide count"""
         try:
             result = self.runner.run_inline_script(f'''
                 tell application "Keynote"
@@ -347,17 +347,17 @@ class SlideTools:
             
             return [TextContent(
                 type="text",
-                text=f"📊 幻灯片数量: {result}"
+                text=f"📊 Slide count: {result}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 获取幻灯片数量失败: {str(e)}"
+                text=f"❌ Failed to get slide count: {str(e)}"
             )]
     
     async def select_slide(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
-        """选择指定幻灯片"""
+        """Select a specific slide"""
         try:
             validate_slide_number(slide_number)
             
@@ -375,17 +375,17 @@ class SlideTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功选择幻灯片 {slide_number}"
+                text=f"✅ Selected slide {slide_number}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 选择幻灯片失败: {str(e)}"
+                text=f"❌ Failed to select slide: {str(e)}"
             )]
     
     async def set_slide_layout(self, slide_number: int, layout: str, doc_name: str = "") -> List[TextContent]:
-        """设置幻灯片布局"""
+        """Set slide layout"""
         try:
             validate_slide_number(slide_number)
             
@@ -398,7 +398,7 @@ class SlideTools:
                     end if
                     
                     try
-                        -- 找到目标布局
+                        -- Find target layout
                         set targetLayout to missing value
                         repeat with masterSlide in master slides of targetDoc
                             if name of masterSlide is "{layout}" then
@@ -411,7 +411,7 @@ class SlideTools:
                             return "layout_not_found"
                         end if
                         
-                        -- 设置幻灯片布局（使用正确的语法：base slide）
+                        -- Set slide layout (using correct syntax: base slide)
                         set base slide of slide {slide_number} of targetDoc to targetLayout
                         return "success"
                     on error errMsg
@@ -423,27 +423,27 @@ class SlideTools:
             if result == "success":
                 return [TextContent(
                     type="text",
-                    text=f"✅ 成功设置幻灯片 {slide_number} 的布局为: {layout}"
+                    text=f"✅ Set slide {slide_number} layout to: {layout}"
                 )]
             elif result == "layout_not_found":
                 return [TextContent(
                     type="text",
-                    text=f"❌ 布局不存在: {layout}"
+                    text=f"❌ Layout not found: {layout}"
                 )]
             else:
                 return [TextContent(
                     type="text",
-                    text=f"❌ 设置布局失败: {result}"
+                    text=f"❌ Failed to set layout: {result}"
                 )]
                 
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 设置幻灯片布局失败: {str(e)}"
+                text=f"❌ Failed to set slide layout: {str(e)}"
             )]
     
     async def get_slide_info(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
-        """获取幻灯片信息"""
+        """Get slide info"""
         try:
             validate_slide_number(slide_number)
             
@@ -481,22 +481,22 @@ class SlideTools:
                 number, layout, text_count = info_parts[0], info_parts[1], info_parts[2]
                 return [TextContent(
                     type="text",
-                    text=f"📊 幻灯片 {slide_number} 信息:\n• 编号: {number}\n• 布局: {layout}\n• 文本框数量: {text_count}"
+                    text=f"📊 Slide {slide_number} info:\n• Number: {number}\n• Layout: {layout}\n• Text item count: {text_count}"
                 )]
             else:
                 return [TextContent(
                     type="text",
-                    text=f"📊 幻灯片 {slide_number} 信息: {result}"
+                    text=f"📊 Slide {slide_number} info: {result}"
                 )]
                 
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 获取幻灯片信息失败: {str(e)}"
+                text=f"❌ Failed to get slide info: {str(e)}"
             )]
     
     async def get_available_layouts(self, doc_name: str = "") -> List[TextContent]:
-        """获取可用布局列表"""
+        """Get available layouts"""
         try:
             result = self.runner.run_inline_script(f'''
                 tell application "Keynote"
@@ -511,7 +511,7 @@ class SlideTools:
                         set end of layoutList to name of masterSlide
                     end repeat
                     
-                    -- 使用特殊分隔符来避免布局名称中的逗号问题
+                    -- Use special delimiter to avoid comma issues in layout names
                     set AppleScript's text item delimiters to "|||"
                     set layoutString to layoutList as string
                     set AppleScript's text item delimiters to ""
@@ -525,16 +525,16 @@ class SlideTools:
                 layout_list = "\n".join([f"• {layout.strip()}" for layout in layouts if layout.strip()])
                 return [TextContent(
                     type="text",
-                    text=f"📐 可用布局:\n{layout_list}"
+                    text=f"📐 Available layouts:\n{layout_list}"
                 )]
             else:
                 return [TextContent(
                     type="text",
-                    text="📐 没有找到可用布局"
+                    text="📐 No available layouts found"
                 )]
                 
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 获取布局列表失败: {str(e)}"
+                text=f"❌ Failed to get layouts: {str(e)}"
             )] 

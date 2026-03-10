@@ -1,35 +1,35 @@
 -- keynote_base.applescript
--- 基础 Keynote 操作脚本
+-- Basic Keynote operations script
 
--- 检查 Keynote 是否运行
+-- Check if Keynote is running
 on checkKeynoteRunning()
     tell application "System Events"
         return (name of processes) contains "Keynote"
     end tell
 end checkKeynoteRunning
 
--- 启动 Keynote
+-- Launch Keynote
 on launchKeynote()
     tell application "Keynote"
         activate
     end tell
 end launchKeynote
 
--- 退出 Keynote
+-- Quit Keynote
 on quitKeynote()
     tell application "Keynote"
         quit
     end tell
 end quitKeynote
 
--- 获取 Keynote 版本
+-- Get Keynote version
 on getKeynoteVersion()
     tell application "Keynote"
         return version
     end tell
 end getKeynoteVersion
 
--- 获取当前活动文档
+-- Get current active document
 on getCurrentDocument()
     tell application "Keynote"
         if (count of documents) > 0 then
@@ -40,7 +40,7 @@ on getCurrentDocument()
     end tell
 end getCurrentDocument
 
--- 检查文档是否存在
+-- Check if document exists
 on documentExists(docName)
     tell application "Keynote"
         try
@@ -52,7 +52,7 @@ on documentExists(docName)
     end tell
 end documentExists
 
--- 获取所有打开的文档列表
+-- Get list of all open documents
 on getOpenDocuments()
     tell application "Keynote"
         set docList to {}
@@ -63,7 +63,7 @@ on getOpenDocuments()
     end tell
 end getOpenDocuments
 
--- 激活指定文档
+-- Activate specified document
 on activateDocument(docName)
     tell application "Keynote"
         set front document to document docName

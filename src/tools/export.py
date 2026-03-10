@@ -1,5 +1,5 @@
 """
-导出和截图工具
+Export and screenshot tools
 """
 
 from typing import Any, Dict, List, Optional
@@ -8,13 +8,13 @@ from ..utils import AppleScriptRunner, validate_slide_number, validate_file_path
 
 
 class ExportTools:
-    """导出和截图工具类"""
+    """Export and screenshot tools class"""
     
     def __init__(self):
         self.runner = AppleScriptRunner()
     
     def get_tools(self) -> List[Tool]:
-        """获取所有导出和截图工具"""
+        """Get all export and screenshot tools"""
         return [
             Tool(
                 name="screenshot_slide",
@@ -55,20 +55,20 @@ class ExportTools:
         ]
     
     async def screenshot_slide(self, slide_number: int, output_path: str, format: str = "png") -> List[TextContent]:
-        """截图单个幻灯片"""
+        """Take a screenshot of a single slide"""
         try:
             validate_slide_number(slide_number)
             validate_file_path(output_path)
             
-            # 设置导出格式
+            # Set export format
             export_format = "JPEG" if format.lower() in ["jpg", "jpeg"] else "PNG"
             
-            # 从输出路径获取目录和文件名
+            # Get directory and filename from output path
             import os
             output_dir = os.path.dirname(output_path)
             output_filename = os.path.basename(output_path)
             
-            # 创建临时导出文件夹
+            # Create temporary export folder
             temp_folder = os.path.join(output_dir, "temp_keynote_export")
             
             result = self.runner.run_inline_script(f'''
@@ -77,24 +77,24 @@ class ExportTools:
                     set targetDoc to front document
                     set docName to name of targetDoc
                     
-                    -- 将所有幻灯片设为跳过，除了目标幻灯片
+                    -- Skip all slides except the target slide
                     tell targetDoc
                         set skipped of every slide to true
                         set skipped of slide {slide_number} to false
                     end tell
                     
-                    -- 创建临时导出文件夹
+                    -- Create temporary export folder
                     tell application "Finder"
                         if not (exists folder "{temp_folder}") then
                             make new folder at (POSIX file "{output_dir}") with properties {{name:"temp_keynote_export"}}
                         end if
                     end tell
                     
-                    -- 导出幻灯片为图片到临时文件夹
+                    -- Export slide as image to temporary folder
                     set outputFolder to POSIX file "{temp_folder}"
                     export targetDoc as slide images to outputFolder with properties {{image format:{export_format}, skipped slides:false}}
                     
-                    -- 恢复所有幻灯片
+                    -- Restore all slides
                     tell targetDoc
                         set skipped of every slide to false
                     end tell
@@ -103,35 +103,35 @@ class ExportTools:
                 end tell
             ''')
             
-            # 查找生成的文件并重命名为目标文件名
+            # Find generated file and rename to target filename
             import glob
             generated_files = glob.glob(os.path.join(temp_folder, f"*.{format.lower()}"))
             if generated_files:
-                # 移动第一个文件到目标位置
+                # Move the first file to the target location
                 import shutil
                 shutil.move(generated_files[0], output_path)
                 
-                # 清理临时文件夹
+                # Clean up temporary folder
                 shutil.rmtree(temp_folder, ignore_errors=True)
                 
                 return [TextContent(
                     type="text",
-                    text=f"✅ 成功截图幻灯片 {slide_number} 到: {output_path}"
+                    text=f"Successfully captured screenshot of slide {slide_number} to: {output_path}"
                 )]
             else:
                 return [TextContent(
                     type="text",
-                    text=f"❌ 截图文件未生成"
+                    text=f"Screenshot file was not generated"
                 )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 截图幻灯片失败: {str(e)}"
+                text=f"Failed to screenshot slide: {str(e)}"
             )]
     
     async def export_pdf(self, output_path: str) -> List[TextContent]:
-        """导出演示文稿为PDF"""
+        """Export presentation as PDF"""
         try:
             validate_file_path(output_path)
             
@@ -140,7 +140,7 @@ class ExportTools:
                     set targetDoc to front document
                     set outputFile to POSIX file "{output_path}"
                     
-                    -- 导出为PDF
+                    -- Export as PDF
                     export targetDoc to outputFile as PDF
                     
                     return "success"
@@ -149,11 +149,11 @@ class ExportTools:
             
             return [TextContent(
                 type="text",
-                text=f"✅ 成功导出PDF到: {output_path}"
+                text=f"Successfully exported PDF to: {output_path}"
             )]
             
         except Exception as e:
             return [TextContent(
                 type="text",
-                text=f"❌ 导出PDF失败: {str(e)}"
+                text=f"Failed to export PDF: {str(e)}"
             )] 

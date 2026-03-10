@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "keynote-mcp"
 version = "1.0.0"
-description = "一个专为大模型设计的 MCP 套件，通过 AppleScript 实现对 Keynote 的全面控制"
+description = "An MCP server for controlling Keynote via AppleScript"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -93,7 +93,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 "*" = ["*.scpt", "*.applescript", "*.md", "*.txt"]
 
-# Black 配置
+# Black config
 [tool.black]
 line-length = 88
 target-version = ['py38']
@@ -112,14 +112,14 @@ extend-exclude = '''
 )/
 '''
 
-# isort 配置
+# isort config
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 line_length = 88
 known_first_party = ["src"]
 
-# MyPy 配置
+# MyPy config
 [tool.mypy]
 python_version = "3.8"
 warn_return_any = true
@@ -144,7 +144,7 @@ module = [
 ]
 ignore_missing_imports = true
 
-# Pytest 配置
+# Pytest config
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
@@ -165,7 +165,7 @@ markers = [
     "unit: marks tests as unit tests",
 ]
 
-# Coverage 配置
+# Coverage config
 [tool.coverage.run]
 source = ["src"]
 omit = [
@@ -190,7 +190,7 @@ exclude_lines = [
     "@(abc\\.)?abstractmethod",
 ]
 
-# Bandit 配置
+# Bandit config
 [tool.bandit]
 exclude_dirs = ["tests", "venv", "env"]
 skips = ["B101", "B601"] 

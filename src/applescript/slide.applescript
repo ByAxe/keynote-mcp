@@ -1,7 +1,7 @@
 -- slide.applescript
--- 幻灯片操作脚本
+-- Slide operations script
 
--- 添加新幻灯片
+-- Add new slide
 on addSlide(docName, slidePosition, layoutType)
     tell application "Keynote"
         if docName is "" then
@@ -16,7 +16,7 @@ on addSlide(docName, slidePosition, layoutType)
             set newSlide to make new slide at slide slidePosition of targetDoc
         end if
         
-        -- 如果没有指定布局，默认使用 Blank 布局来避免默认文本占位符
+        -- If no layout specified, default to Blank layout to avoid default text placeholders
         if layoutType is "" then
             set layoutType to "Blank"
         end if
@@ -25,7 +25,7 @@ on addSlide(docName, slidePosition, layoutType)
             try
                 set base slide of newSlide to master slide layoutType of targetDoc
             on error
-                -- 如果布局不存在，尝试使用 Blank 布局
+                -- If layout not found, try using Blank layout
                 try
                     set base slide of newSlide to master slide "Blank" of targetDoc
                     log "Layout " & layoutType & " not found, using Blank layout"
@@ -39,7 +39,7 @@ on addSlide(docName, slidePosition, layoutType)
     end tell
 end addSlide
 
--- 删除幻灯片
+-- Delete slide
 on deleteSlide(docName, slideNumber)
     tell application "Keynote"
         if docName is "" then
@@ -52,7 +52,7 @@ on deleteSlide(docName, slideNumber)
     end tell
 end deleteSlide
 
--- 复制幻灯片
+-- Duplicate slide
 on duplicateSlide(docName, slideNumber, newPosition)
     tell application "Keynote"
         if docName is "" then
@@ -72,7 +72,7 @@ on duplicateSlide(docName, slideNumber, newPosition)
     end tell
 end duplicateSlide
 
--- 移动幻灯片
+-- Move slide
 on moveSlide(docName, fromPosition, toPosition)
     tell application "Keynote"
         if docName is "" then
@@ -86,7 +86,7 @@ on moveSlide(docName, fromPosition, toPosition)
     end tell
 end moveSlide
 
--- 获取幻灯片数量
+-- Get slide count
 on getSlideCount(docName)
     tell application "Keynote"
         if docName is "" then
@@ -99,7 +99,7 @@ on getSlideCount(docName)
     end tell
 end getSlideCount
 
--- 选择幻灯片
+-- Select slide
 on selectSlide(docName, slideNumber)
     tell application "Keynote"
         if docName is "" then
@@ -112,7 +112,7 @@ on selectSlide(docName, slideNumber)
     end tell
 end selectSlide
 
--- 获取当前幻灯片编号
+-- Get current slide number
 on getCurrentSlideNumber(docName)
     tell application "Keynote"
         if docName is "" then
@@ -125,7 +125,7 @@ on getCurrentSlideNumber(docName)
     end tell
 end getCurrentSlideNumber
 
--- 设置幻灯片布局
+-- Set slide layout
 on setSlideLayout(docName, slideNumber, layoutType)
     tell application "Keynote"
         if docName is "" then
@@ -143,7 +143,7 @@ on setSlideLayout(docName, slideNumber, layoutType)
     end tell
 end setSlideLayout
 
--- 获取可用布局列表
+-- Get available layouts list
 on getAvailableLayouts(docName)
     tell application "Keynote"
         if docName is "" then
@@ -160,7 +160,7 @@ on getAvailableLayouts(docName)
     end tell
 end getAvailableLayouts
 
--- 获取幻灯片信息
+-- Get slide info
 on getSlideInfo(docName, slideNumber)
     tell application "Keynote"
         if docName is "" then
@@ -190,7 +190,7 @@ on getSlideInfo(docName, slideNumber)
     end tell
 end getSlideInfo
 
--- 跳转到幻灯片
+-- Go to slide
 on goToSlide(docName, slideNumber)
     tell application "Keynote"
         if docName is "" then
@@ -204,7 +204,7 @@ on goToSlide(docName, slideNumber)
     end tell
 end goToSlide
 
--- 获取幻灯片标题
+-- Get slide title
 on getSlideTitle(docName, slideNumber)
     tell application "Keynote"
         if docName is "" then
@@ -216,14 +216,14 @@ on getSlideTitle(docName, slideNumber)
         set targetSlide to slide slideNumber of targetDoc
         
         try
-            -- 尝试获取标题文本框的内容
+            -- Try to get the content of the title text box
             repeat with textItem in text items of targetSlide
-                if object text of textItem contains "标题" or object text of textItem contains "Title" then
+                if object text of textItem contains "Title" then
                     return object text of textItem
                 end if
             end repeat
             
-            -- 如果没有找到标题，返回第一个文本项
+            -- If no title found, return the first text item
             if (count of text items of targetSlide) > 0 then
                 return object text of text item 1 of targetSlide
             else
@@ -235,7 +235,7 @@ on getSlideTitle(docName, slideNumber)
     end tell
 end getSlideTitle
 
--- 设置幻灯片标题
+-- Set slide title
 on setSlideTitle(docName, slideNumber, titleText)
     tell application "Keynote"
         if docName is "" then
@@ -247,15 +247,15 @@ on setSlideTitle(docName, slideNumber, titleText)
         set targetSlide to slide slideNumber of targetDoc
         
         try
-            -- 尝试找到标题文本框并设置内容
+            -- Try to find the title text box and set its content
             repeat with textItem in text items of targetSlide
-                if object text of textItem contains "标题" or object text of textItem contains "Title" then
+                if object text of textItem contains "Title" then
                     set object text of textItem to titleText
                     return true
                 end if
             end repeat
             
-            -- 如果没有找到标题，设置第一个文本项
+            -- If no title found, set the first text item
             if (count of text items of targetSlide) > 0 then
                 set object text of text item 1 of targetSlide to titleText
                 return true

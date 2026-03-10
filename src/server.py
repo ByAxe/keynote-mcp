@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Keynote-MCP Server
-一个专为大模型设计的 MCP 服务器，通过 AppleScript 实现对 Keynote 的全面控制
+An MCP server for controlling Keynote via AppleScript
 """
 
 import asyncio
@@ -23,7 +23,7 @@ from .utils import KeynoteError, AppleScriptError, FileOperationError, Parameter
 
 
 class KeynoteMCPServer:
-    """Keynote MCP 服务器"""
+    """Keynote MCP Server"""
     
     def __init__(self):
         self.server = Server("keynote-mcp")
@@ -34,18 +34,18 @@ class KeynoteMCPServer:
         try:
             self.unsplash_tools = UnsplashTools()
         except ParameterError as e:
-            print(f"⚠️ Unsplash工具初始化失败: {e}")
+            print(f"⚠️ Unsplash tools initialization failed: {e}")
             self.unsplash_tools = None
         
-        # 注册处理器
+        # Register handlers
         self._register_handlers()
     
     def _register_handlers(self):
-        """注册 MCP 处理器"""
+        """Register MCP handlers"""
         
         @self.server.list_tools()
         async def list_tools() -> list[Tool]:
-            """列出所有可用工具"""
+            """List all available tools"""
             tools = []
             tools.extend(self.presentation_tools.get_tools())
             tools.extend(self.slide_tools.get_tools())
@@ -57,9 +57,9 @@ class KeynoteMCPServer:
         
         @self.server.call_tool()
         async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
-            """调用工具"""
+            """Call a tool"""
             try:
-                # 演示文稿管理工具
+                # Presentation management tools
                 if name == "create_presentation":
                     return await self.presentation_tools.create_presentation(
                         title=arguments["title"],
@@ -101,7 +101,7 @@ class KeynoteMCPServer:
                         doc_name=arguments.get("doc_name", "")
                     )
                 
-                # 幻灯片操作工具
+                # Slide operation tools
                 elif name == "add_slide":
                     return await self.slide_tools.add_slide(
                         doc_name=arguments.get("doc_name", ""),
@@ -150,7 +150,7 @@ class KeynoteMCPServer:
                         doc_name=arguments.get("doc_name", "")
                     )
                 
-                # 内容管理工具
+                # Content management tools
                 elif name == "add_text_box":
                     return await self.content_tools.add_text_box(
                         slide_number=arguments["slide_number"],
@@ -219,8 +219,56 @@ class KeynoteMCPServer:
                         x=arguments.get("x"),
                         y=arguments.get("y")
                     )
-                
-                # 导出和截图工具
+                elif name == "get_slide_content":
+                    return await self.content_tools.get_slide_content(
+                        slide_number=arguments["slide_number"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "edit_text_item":
+                    return await self.content_tools.edit_text_item(
+                        slide_number=arguments["slide_number"],
+                        item_index=arguments["item_index"],
+                        new_text=arguments["new_text"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "delete_element":
+                    return await self.content_tools.delete_element(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "move_element":
+                    return await self.content_tools.move_element(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"],
+                        x=arguments["x"],
+                        y=arguments["y"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "resize_element":
+                    return await self.content_tools.resize_element(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"],
+                        width=arguments["width"],
+                        height=arguments["height"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "get_speaker_notes":
+                    return await self.content_tools.get_speaker_notes(
+                        slide_number=arguments["slide_number"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "set_speaker_notes":
+                    return await self.content_tools.set_speaker_notes(
+                        slide_number=arguments["slide_number"],
+                        notes=arguments["notes"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+
+                # Export and screenshot tools
                 elif name == "screenshot_slide":
                     return await self.export_tools.screenshot_slide(
                         slide_number=arguments["slide_number"],
@@ -231,12 +279,12 @@ class KeynoteMCPServer:
                     return await self.export_tools.export_pdf(
                         output_path=arguments["output_path"]
                     )
-                # Unsplash配图工具
+                # Unsplash image tools
                 elif name == "search_unsplash_images":
                     if not self.unsplash_tools:
                         return [TextContent(
                             type="text",
-                            text="❌ Unsplash工具未初始化，请检查环境变量 UNSPLASH_KEY"
+                            text="❌ Unsplash tools not initialized. Please check the UNSPLASH_KEY environment variable."
                         )]
                     return await self.unsplash_tools.search_unsplash_images(
                         query=arguments["query"],
@@ -248,7 +296,7 @@ class KeynoteMCPServer:
                     if not self.unsplash_tools:
                         return [TextContent(
                             type="text",
-                            text="❌ Unsplash工具未初始化，请检查环境变量 UNSPLASH_KEY"
+                            text="❌ Unsplash tools not initialized. Please check the UNSPLASH_KEY environment variable."
                         )]
                     return await self.unsplash_tools.add_unsplash_image_to_slide(
                         slide_number=arguments["slide_number"],
@@ -264,7 +312,7 @@ class KeynoteMCPServer:
                     if not self.unsplash_tools:
                         return [TextContent(
                             type="text",
-                            text="❌ Unsplash工具未初始化，请检查环境变量 UNSPLASH_KEY"
+                            text="❌ Unsplash tools not initialized. Please check the UNSPLASH_KEY environment variable."
                         )]
                     return await self.unsplash_tools.get_random_unsplash_image(
                         slide_number=arguments["slide_number"],
@@ -279,37 +327,37 @@ class KeynoteMCPServer:
                 else:
                     return [TextContent(
                         type="text",
-                        text=f"❌ 未知工具: {name}"
+                        text=f"❌ Unknown tool: {name}"
                     )]
                     
             except ParameterError as e:
                 return [TextContent(
                     type="text",
-                    text=f"❌ 参数错误: {str(e)}"
+                    text=f"❌ Parameter error: {str(e)}"
                 )]
             except AppleScriptError as e:
                 return [TextContent(
                     type="text",
-                    text=f"❌ AppleScript 错误: {str(e)}"
+                    text=f"❌ AppleScript error: {str(e)}"
                 )]
             except FileOperationError as e:
                 return [TextContent(
                     type="text",
-                    text=f"❌ 文件操作错误: {str(e)}"
+                    text=f"❌ File operation error: {str(e)}"
                 )]
             except KeynoteError as e:
                 return [TextContent(
                     type="text",
-                    text=f"❌ Keynote 错误: {str(e)}"
+                    text=f"❌ Keynote error: {str(e)}"
                 )]
             except Exception as e:
                 return [TextContent(
                     type="text",
-                    text=f"❌ 未知错误: {str(e)}"
+                    text=f"❌ Unknown error: {str(e)}"
                 )]
     
     async def run(self):
-        """启动服务器"""
+        """Start the server"""
         async with stdio_server() as (read_stream, write_stream):
             await self.server.run(
                 read_stream,
