@@ -5,14 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "keynote-mcp"
 version = "1.0.0"
-description = "An MCP server for controlling Keynote via AppleScript"
+description = "An MCP server for controlling Apple Keynote presentations via AppleScript"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
-    {name = "Keynote-MCP Team", email = "your-email@example.com"},
+    {name = "easychen", email = "easychen@gmail.com"},
+    {name = "ByAxe"},
 ]
 maintainers = [
-    {name = "Keynote-MCP Team", email = "your-email@example.com"},
+    {name = "ByAxe"},
 ]
 keywords = [
     "keynote",
@@ -28,19 +29,17 @@ keywords = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: MacOS",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Multimedia :: Graphics :: Presentation",
     "Topic :: Office/Business :: Office Suites",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "mcp>=1.0.0",
     "typing-extensions>=4.0.0",
@@ -75,14 +74,13 @@ build = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/easychen/keynote-mcp"
-Repository = "https://github.com/easychen/keynote-mcp"
-Documentation = "https://github.com/easychen/keynote-mcp/blob/main/docs/README.md"
-"Bug Reports" = "https://github.com/easychen/keynote-mcp/issues"
-Changelog = "https://github.com/easychen/keynote-mcp/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ByAxe/keynote-mcp"
+Repository = "https://github.com/ByAxe/keynote-mcp"
+Documentation = "https://github.com/ByAxe/keynote-mcp#readme"
+"Bug Reports" = "https://github.com/ByAxe/keynote-mcp/issues"
 
 [project.scripts]
-keynote-mcp = "src.server:main"
+keynote-mcp = "keynote_mcp.server:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -91,12 +89,12 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-"*" = ["*.scpt", "*.applescript", "*.md", "*.txt"]
+keynote_mcp = ["applescript/*.scpt", "applescript/*.applescript"]
 
 # Black config
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py310']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -117,11 +115,11 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["src"]
+known_first_party = ["keynote_mcp"]
 
 # MyPy config
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -154,7 +152,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
-    "--cov=src",
+    "--cov=keynote_mcp",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -167,7 +165,7 @@ markers = [
 
 # Coverage config
 [tool.coverage.run]
-source = ["src"]
+source = ["keynote_mcp"]
 omit = [
     "*/tests/*",
     "*/test_*",

@@ -111,7 +111,7 @@ async def demo_presentation_workflow():
     
     print("\n✅ 演示文稿工作流程完成!")
     print("\n📝 使用说明:")
-    print("1. 启动 Keynote-MCP 服务器: python -m src.server")
+    print("1. 启动 Keynote-MCP 服务器: keynote-mcp (or python -m keynote_mcp)")
     print("2. 通过 MCP 客户端连接并发送上述命令")
     print("3. 确保 Keynote 应用已安装并有必要的权限")
 

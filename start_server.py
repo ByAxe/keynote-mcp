@@ -93,7 +93,7 @@ except ImportError:
     print(messages['dotenv_not_installed'])
 
 # 导入并运行服务器
-from src.server import main
+from keynote_mcp.server import main
 
 if __name__ == "__main__":
     print(messages['starting'])

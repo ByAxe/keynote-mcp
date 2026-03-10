@@ -8,12 +8,12 @@ An MCP (Model Context Protocol) server that controls Apple Keynote via AppleScri
 
 ```bash
 cd /Users/alekseilitvinau/src/keynote-mcp
-.venv/bin/python -m src.server
+.venv/bin/python -m keynote_mcp
 ```
 
 Registered in Claude Code as:
 ```
-keynote-mcp: bash -c cd /Users/alekseilitvinau/src/keynote-mcp && .venv/bin/python -m src.server
+keynote-mcp: bash -c cd /Users/alekseilitvinau/src/keynote-mcp && .venv/bin/python -m keynote_mcp
 ```
 
 **After any code changes, the MCP server must be restarted** (exit/re-enter the Claude Code session or use `/mcp` to restart).
@@ -22,31 +22,34 @@ keynote-mcp: bash -c cd /Users/alekseilitvinau/src/keynote-mcp && .venv/bin/pyth
 
 ```
 src/
-  server.py              — Main MCP server: registers handlers, routes tool calls
-  tools/
-    presentation.py      — create/open/save/close/list presentations, themes, resolution
-    slide.py             — add/delete/duplicate/move slides, layouts
-    content.py           — add text boxes/titles/subtitles/lists/code/quotes/images,
-                           edit/delete/move/resize elements, speaker notes, get_slide_content
-    export.py            — screenshot slides, export PDF
-    unsplash.py          — search/add Unsplash images (requires UNSPLASH_KEY env var)
-  utils/
-    applescript_runner.py — Executes AppleScript via osascript subprocess (30s timeout)
-    error_handler.py     — Exception hierarchy + validation functions
-  applescript/
-    keynote_base.applescript   — Base helpers (get doc reference)
-    presentation.applescript   — Presentation operations
-    slide.applescript          — Slide operations
-    content.applescript        — Content manipulation (text, images, lists)
-    export.applescript         — Export/screenshot operations
-tests/                   — Test scaffolding (unit/ and integration/)
+  keynote_mcp/             — Installable Python package
+    __init__.py            — Package version
+    __main__.py            — python -m keynote_mcp entry point
+    server.py              — Main MCP server: registers handlers, routes tool calls
+    tools/
+      presentation.py      — create/open/save/close/list presentations, themes, resolution
+      slide.py             — add/delete/duplicate/move slides, layouts
+      content.py           — add text boxes/titles/subtitles/lists/code/quotes/images,
+                             edit/delete/move/resize elements, speaker notes, get_slide_content
+      export.py            — screenshot slides, export PDF
+      unsplash.py          — search/add Unsplash images (requires UNSPLASH_KEY env var)
+    utils/
+      applescript_runner.py — Executes AppleScript via osascript subprocess (30s timeout)
+      error_handler.py     — Exception hierarchy + validation functions
+    applescript/
+      keynote_base.applescript   — Base helpers (get doc reference)
+      presentation.applescript   — Presentation operations
+      slide.applescript          — Slide operations
+      content.applescript        — Content manipulation (text, images, lists)
+      export.applescript         — Export/screenshot operations
+tests/                     — Test scaffolding (unit/ and integration/)
 ```
 
 ## Architecture
 
 1. **server.py** — Single `KeynoteMCPServer` class. Uses `mcp` library's `Server` with stdio transport. All tool calls go through one big if/elif dispatch in `call_tool()`.
 2. **Tool classes** — Each `*Tools` class has `get_tools()` (returns `List[Tool]` with schemas) and async methods per tool. They use `AppleScriptRunner` to execute scripts.
-3. **AppleScriptRunner** — Runs AppleScript via `osascript -e` subprocess. Can run inline scripts or load `.scpt` files. Scripts are in `src/applescript/`.
+3. **AppleScriptRunner** — Runs AppleScript via `osascript -e` subprocess. Can run inline scripts or load `.scpt` files. Scripts are in `src/keynote_mcp/applescript/`.
 4. **Error hierarchy** — `KeynoteError` base → `AppleScriptError`, `FileOperationError`, `ParameterError`. Validation helpers: `validate_slide_number`, `validate_coordinates`, `validate_file_path`, `validate_element_type`, `validate_dimensions`.
 
 ## Key patterns

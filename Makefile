@@ -47,7 +47,7 @@ test: ## 运行测试
 	pytest tests/ -v
 
 test-cov: ## 运行测试并生成覆盖率报告
-	pytest tests/ -v --cov=src --cov-report=html --cov-report=term
+	pytest tests/ -v --cov=keynote_mcp --cov-report=html --cov-report=term
 
 test-unit: ## 运行单元测试
 	pytest tests/ -v -m "unit"
@@ -109,7 +109,7 @@ pre-commit: format lint test ## 提交前检查
 
 # 版本相关
 version: ## 显示版本信息
-	@python -c "import src; print(f'Version: {src.__version__}')"
+	@python -c "import keynote_mcp; print(f'Version: {keynote_mcp.__version__}')"
 
 # 环境相关
 env-check: ## 检查环境配置
@@ -129,6 +129,6 @@ git-clean: ## 清理 Git 仓库
 info: ## 显示项目信息
 	@echo "项目: Keynote-MCP"
 	@echo "描述: 一个专为大模型设计的 MCP 套件"
-	@echo "版本: $(shell python -c 'import src; print(src.__version__)')"
+	@echo "版本: $(shell python -c 'import keynote_mcp; print(keynote_mcp.__version__)')"
 	@echo "Python: $(shell python --version)"
 	@echo "路径: $(shell pwd)" 

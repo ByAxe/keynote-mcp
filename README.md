@@ -1,7 +1,8 @@
 # Keynote MCP
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/keynote-mcp.svg)](https://pypi.org/project/keynote-mcp/)
 [![macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
 
 An MCP server that gives AI full control over Apple Keynote through AppleScript automation. Create, edit, and export presentations — all via natural language.
@@ -14,23 +15,39 @@ Ships with a **Claude Skill** that encodes layout rules, font workarounds, and d
 
 - macOS 10.14+
 - Keynote application installed
-- Python 3.8+
+- Python 3.10+
 
-### 1. Clone and install
+### Option A: Install from PyPI
+
+```bash
+pip install keynote-mcp
+```
+
+Or run directly with `uvx` (no install needed):
+```bash
+uvx keynote-mcp
+```
+
+### Option B: Install from source
 
 ```bash
 git clone https://github.com/ByAxe/keynote-mcp.git
 cd keynote-mcp
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e .
 ```
 
-### 2. Register the MCP server
+### Register the MCP server
 
-**Claude Code:**
+**Claude Code (PyPI install / uvx):**
 ```bash
-claude mcp add keynote-mcp "bash -c cd $(pwd) && .venv/bin/python -m src.server"
+claude mcp add keynote-mcp keynote-mcp
+```
+
+**Claude Code (from source):**
+```bash
+claude mcp add keynote-mcp "bash -c cd $(pwd) && .venv/bin/python -m keynote_mcp"
 ```
 
 **Claude Desktop** — add to `claude_desktop_config.json`:
@@ -38,9 +55,22 @@ claude mcp add keynote-mcp "bash -c cd $(pwd) && .venv/bin/python -m src.server"
 {
   "mcpServers": {
     "keynote-mcp": {
-      "command": "python",
-      "args": ["-m", "src.server"],
-      "cwd": "/path/to/keynote-mcp",
+      "command": "keynote-mcp",
+      "env": {
+        "UNSPLASH_KEY": "your_key_here"
+      }
+    }
+  }
+}
+```
+
+Or if using `uvx`:
+```json
+{
+  "mcpServers": {
+    "keynote-mcp": {
+      "command": "uvx",
+      "args": ["keynote-mcp"],
       "env": {
         "UNSPLASH_KEY": "your_key_here"
       }
@@ -50,8 +80,7 @@ claude mcp add keynote-mcp "bash -c cd $(pwd) && .venv/bin/python -m src.server"
 ```
 
 **Other MCP clients:**
-- Command: `python -m src.server`
-- Working directory: `/path/to/keynote-mcp`
+- Command: `keynote-mcp` (if installed via pip) or `uvx keynote-mcp`
 - Transport: stdio
 
 ### 3. Install the Skill (recommended)
@@ -122,19 +151,22 @@ skills/keynote-presentation/
 
 ```
 src/
-  server.py              # MCP server — routes tool calls via stdio
-  tools/
-    presentation.py      # Presentation lifecycle tools
-    slide.py             # Slide management tools
-    content.py           # Content creation and editing tools
-    export.py            # Screenshot and PDF export tools
-    unsplash.py          # Unsplash image integration
-  utils/
-    applescript_runner.py # Executes AppleScript via osascript
-    error_handler.py     # Exception hierarchy and validation
-  applescript/           # AppleScript source files
-skills/                  # Claude Skills for this MCP
-tests/                   # Test scaffolding
+  keynote_mcp/
+    __init__.py            # Package version
+    __main__.py            # python -m keynote_mcp entry point
+    server.py              # MCP server — routes tool calls via stdio
+    tools/
+      presentation.py      # Presentation lifecycle tools
+      slide.py             # Slide management tools
+      content.py           # Content creation and editing tools
+      export.py            # Screenshot and PDF export tools
+      unsplash.py          # Unsplash image integration
+    utils/
+      applescript_runner.py # Executes AppleScript via osascript
+      error_handler.py     # Exception hierarchy and validation
+    applescript/           # AppleScript source files
+skills/                    # Claude Skills for this MCP
+tests/                     # Test scaffolding
 ```
 
 ## Contributing

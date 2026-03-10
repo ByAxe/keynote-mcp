@@ -1,24 +1,34 @@
 #!/usr/bin/env python3
 """
-Keynote-MCP Setup Script
+Keynote-MCP Setup Script (legacy - pyproject.toml is the primary config)
 """
 
 from setuptools import setup, find_packages
 import os
 
-# 读取 README.md 文件
+
 def read_readme():
     with open("README.md", "r", encoding="utf-8") as fh:
         return fh.read()
 
-# 读取 requirements.txt 文件
-def read_requirements():
-    with open("requirements.txt", "r", encoding="utf-8") as fh:
-        return [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
-# 读取版本号
+def read_requirements():
+    try:
+        with open("requirements.txt", "r", encoding="utf-8") as fh:
+            return [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+    except FileNotFoundError:
+        return [
+            "mcp>=1.0.0",
+            "typing-extensions>=4.0.0",
+            "aiohttp>=3.8.0",
+            "aiofiles>=0.8.0",
+            "Pillow>=9.0.0",
+            "python-dotenv>=1.0.0",
+        ]
+
+
 def read_version():
-    version_file = os.path.join("src", "__init__.py")
+    version_file = os.path.join("src", "keynote_mcp", "__init__.py")
     if os.path.exists(version_file):
         with open(version_file, "r", encoding="utf-8") as fh:
             for line in fh:
@@ -26,12 +36,13 @@ def read_version():
                     return line.split("=")[1].strip().strip('"').strip("'")
     return "1.0.0"
 
+
 setup(
     name="keynote-mcp",
     version=read_version(),
-    author="Keynote-MCP Team",
-    author_email="your-email@example.com",
-    description="一个专为大模型设计的 MCP 套件，通过 AppleScript 实现对 Keynote 的全面控制",
+    author="easychen",
+    author_email="easychen@gmail.com",
+    description="An MCP server for controlling Apple Keynote presentations via AppleScript",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/easychen/keynote-mcp",
@@ -48,16 +59,15 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: MacOS",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Multimedia :: Graphics :: Presentation",
         "Topic :: Office/Business :: Office Suites",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=read_requirements(),
     extras_require={
         "dev": [
@@ -78,13 +88,12 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "keynote-mcp=src.server:main",
+            "keynote-mcp=keynote_mcp.server:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "": ["*.scpt", "*.applescript", "*.md", "*.txt"],
-        "src.applescript": ["*.scpt"],
+        "keynote_mcp": ["applescript/*.scpt", "applescript/*.applescript"],
     },
     zip_safe=False,
     keywords=[
@@ -99,4 +108,4 @@ setup(
         "llm",
     ],
     platforms=["macOS"],
-) 
+)
