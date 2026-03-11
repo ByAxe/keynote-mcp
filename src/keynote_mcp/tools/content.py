@@ -577,6 +577,35 @@ class ContentTools:
                 }
             ),
             Tool(
+                name="add_builds_to_slide",
+                description="Add Build In animations to multiple elements on a slide in one call. Applies builds in order so elements appear sequentially on click. Auto-skips bullet dots (text items containing only '•'). Uses UI scripting.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, or shape",
+                            "enum": ["text", "image", "shape"],
+                            "default": "text"
+                        },
+                        "element_indices": {
+                            "type": "string",
+                            "description": "Comma-separated element indices (1-based), e.g. '5,7,9,11,13'. Use get_slide_content to find indices."
+                        },
+                        "effect": {
+                            "type": "string",
+                            "description": "Animation effect (default: Appear)",
+                            "default": "Appear"
+                        }
+                    },
+                    "required": ["slide_number", "element_indices"]
+                }
+            ),
+            Tool(
                 name="add_shape",
                 description="Create a rectangle shape with optional position, size, and opacity",
                 inputSchema={
@@ -1525,3 +1554,50 @@ class ContentTools:
             )]
         except Exception as e:
             return [TextContent(type="text", text=f"Failed to remove build in: {str(e)}")]
+
+    async def add_builds_to_slide(self, slide_number: int, element_indices: str,
+                                   element_type: str = "text", effect: str = "Appear") -> List[TextContent]:
+        """Add Build In animations to multiple elements on a slide. Skips bullet-dot-only items."""
+        indices = [int(i.strip()) for i in element_indices.split(",") if i.strip()]
+        if not indices:
+            return [TextContent(type="text", text="No element indices provided.")]
+
+        # Check which indices are bullet dots (text is just "•") and skip them
+        as_type = self._ELEMENT_TYPE_MAP.get(element_type, "text item")
+        dots_to_skip = set()
+        if element_type == "text":
+            try:
+                result = self.runner.run_inline_script(f'''
+                    tell application "Keynote"
+                        tell front document
+                            set dotIndices to {{}}
+                            repeat with idx in {{{",".join(str(i) for i in indices)}}}
+                                try
+                                    set t to object text of {as_type} idx of slide {slide_number}
+                                    if t is "•" or t is "• " then
+                                        set end of dotIndices to idx as integer
+                                    end if
+                                end try
+                            end repeat
+                            set AppleScript's text item delimiters to ","
+                            return dotIndices as text
+                        end tell
+                    end tell
+                ''')
+                if result.strip():
+                    dots_to_skip = set(int(x) for x in result.strip().split(",") if x.strip())
+            except Exception:
+                pass  # If check fails, don't skip anything
+
+        results = []
+        for idx in indices:
+            if idx in dots_to_skip:
+                results.append(f"text {idx}: skipped (bullet dot)")
+                continue
+            try:
+                r = await self.add_build_in(slide_number, element_type, idx, effect, "All at Once")
+                results.append(f"{element_type} {idx}: OK")
+            except Exception as e:
+                results.append(f"{element_type} {idx}: FAILED - {str(e)}")
+
+        return [TextContent(type="text", text=f"Builds applied to slide {slide_number}:\n" + "\n".join(results))]

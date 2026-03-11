@@ -298,6 +298,13 @@ class KeynoteMCPServer:
                         element_type=arguments["element_type"],
                         element_index=arguments["element_index"]
                     )
+                elif name == "add_builds_to_slide":
+                    return await self.content_tools.add_builds_to_slide(
+                        slide_number=arguments["slide_number"],
+                        element_indices=arguments["element_indices"],
+                        element_type=arguments.get("element_type", "text"),
+                        effect=arguments.get("effect", "Appear")
+                    )
                 elif name == "add_shape":
                     return await self.content_tools.add_shape(
                         slide_number=arguments["slide_number"],

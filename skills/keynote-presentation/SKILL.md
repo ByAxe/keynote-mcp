@@ -180,21 +180,24 @@ add_text_box(slide=N, text="License // Credits", x=CENTER, y=960)
 
 ## Build Animations (Appear One-by-One)
 
-To make bullet lists or other elements appear incrementally during the slideshow:
-
+### Batch builds (recommended)
 ```
-# Make bullets appear one at a time on click
-add_build_in(slide_number=10, element_type="text", element_index=18, effect="Appear", delivery="By Paragraph")
+# 1. Check slide content to find indices
+get_slide_content(slide_number=4)
 
-# Remove animation
+# 2. Apply builds to all content items (auto-skips "•" dot items)
+add_builds_to_slide(slide_number=4, element_indices="5,7,9,11,13,15,17,19,21")
+```
+
+### Single element builds
+```
+add_build_in(slide_number=10, element_type="text", element_index=18, effect="Appear", delivery="By Paragraph")
 remove_build_in(slide_number=10, element_type="text", element_index=18)
 ```
 
 Effects: `Appear`, `Dissolve`, `Move In`, `Fade and Move`, `Scale`, `Pop`, `Typewriter`
 
-Delivery: `All at Once`, `By Paragraph` (for bullet-by-bullet), `By Highlighted Paragraph`
-
-**Notes**: Uses UI scripting — Keynote must be active with accessibility permissions. For PDF with build stages: File > Export to > PDF > check "Print each stage of builds".
+**Notes**: Uses UI scripting (~6s per element). Keynote must be frontmost with accessibility permissions. Bullet dots stay visible as outline; text appears on click.
 
 ## Common Issues
 
