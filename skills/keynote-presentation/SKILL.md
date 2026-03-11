@@ -1,235 +1,146 @@
 ---
 name: keynote-presentation
-description: Creates polished Keynote presentations via keynote-mcp MCP tools with correct layout, font sizing, and theme selection. Use when user says "create a presentation", "make slides", "build a deck", or asks to use Keynote MCP tools. Handles font clipping bugs, theme pitfalls, coordinate math, and landing-page-style slide design.
+description: Creates polished Keynote presentations via keynote-mcp MCP tools. Use when user says "create a presentation", "make slides", "build a deck", or mentions Keynote. Handles font clipping bugs, theme pitfalls, coordinate math, build animations, and landing-page-style slide design. Do NOT use for PowerPoint or Google Slides.
 license: MIT
-compatibility: Requires macOS with Keynote installed and keynote-mcp MCP server connected. Works with Claude Code and Claude.ai.
 metadata:
     author: ByAxe
-    version: 1.0.0
+    version: 2.0.0
     mcp-server: keynote-mcp
+    category: productivity
+    tags: [keynote, presentations, slides, mcp]
 ---
 
 # Keynote Presentation Builder
 
-Build polished, visually correct Keynote presentations using the keynote-mcp MCP tools. This skill encodes hard-won layout rules, font sizing workarounds, theme pitfalls, and design patterns from real production use.
+Build polished Keynote presentations using keynote-mcp MCP tools. This skill encodes domain expertise about Keynote's AppleScript quirks, layout math, and design patterns.
 
-## Instructions
+## CRITICAL: Font Size Bug
 
-### Step 1: Setup and slide size
+`add_title` with font_size > 48 creates a tiny text box that clips to 1-2 characters.
 
-Always start by confirming the canvas dimensions and picking a theme.
+**Workaround** (always use for large titles):
+1. `add_title(slide_number=1, title="My Title", x=480, y=260, font_size=96)`
+2. `get_slide_content(slide_number=1)` — find the element index N
+3. `resize_element(slide_number=1, element_type="text", element_index=N, width=900, height=140)`
+4. `edit_text_item(slide_number=1, item_index=N, new_text="My Title")` — restore truncated text
 
+**Safe sizes (no workaround needed):** title <=48pt, subtitle <=32pt, bullets <=28pt, code <=20pt
+
+See `references/font-size-workaround.md` for detailed examples.
+
+## Workflow
+
+### Step 1: Setup
 ```
 get_slide_size()
 get_available_themes()
 create_presentation(title="...", theme="Slate")
-```
-
-Use "Slate" theme by default — it applies a dark gradient background to all slide layouts including Blank. Consult `references/theme-reference.md` for the full compatibility table.
-
-After creating the presentation, set slide 1 to "Blank" layout to remove invisible theme placeholder elements that overlap your content:
-
-```
 set_slide_layout(slide_number=1, layout="Blank")
 ```
+- Use **Slate** theme by default (dark gradient, works on Blank layout)
+- Always set slides to **Blank** layout — themed layouts inject invisible placeholders
+- See `references/theme-reference.md` for full compatibility table
 
-### Step 2: Add all slides at once
-
-Batch-create all slides before adding content. This avoids index confusion.
-
+### Step 2: Batch-create slides
+Add all slides before content to avoid index confusion:
 ```
 add_slide(position=2)
 add_slide(position=3)
-# ... etc
 ```
 
-### Step 3: Add content following the font size rules
+### Step 3: Add content
+- Center text manually: `x = 960 - (char_count * px_per_char / 2)`
+- See `references/coordinate-reference.md` for width estimates per font size
+- See `references/slide-templates.md` for hero, statement, bullets, code, and closing patterns
+- Use `references/shape-and-styling.md` for containers, colors, and two-column layouts
 
-**CRITICAL BUG**: `add_title` with `font_size` greater than 48 creates a default-sized text box that clips the text. You will see only 1-2 characters.
-
-**Workaround for large titles (font_size over 48):**
-
-1. Add the title at the desired font size (text will be clipped):
-```
-add_title(slide_number=1, title="Keynote MCP", x=480, y=260, font_size=96)
-```
-
-2. Get the element index:
-```
-get_slide_content(slide_number=1)
-# Find: TEXT:N:::r:::480,260:::43,123 (text is truncated)
-```
-
-3. Resize the text box to fit:
-```
-resize_element(slide_number=1, element_type="text", element_index=N, width=900, height=140)
-```
-
-4. Restore the truncated text:
-```
-edit_text_item(slide_number=1, item_index=N, new_text="Keynote MCP")
-```
-
-**Safe font sizes (no workaround needed):**
-- add_title: up to 48pt
-- add_subtitle: up to 32pt
-- add_bullet_list / add_numbered_list: up to 28pt
-- add_code_block: up to 20pt
-
-### Step 4: Center text manually
-
-There is no text-align property. Text is always left-aligned within its box. To visually center, estimate the rendered width and offset x.
-
-Consult `references/coordinate-reference.md` for per-character width estimates and centering formulas.
-
-Quick reference for a 1920x1080 slide (center at 960, 540):
-- Short title at 64pt (~12 chars): x = 660
-- Medium subtitle at 28pt (~25 chars): x = 560
-- Footer text: y = 950-960
-
-### Step 5: Detect and fix overlaps
-
-After adding elements, verify positions:
-
-```
-get_slide_content(slide_number=N)
-```
-
-Calculate: if element A is at y=300 with height=638, it extends to y=938. Any element placed at y less than 938 will overlap. Fix with:
-
-```
-move_element(slide_number=N, element_type="text", element_index=M, x=..., y=940)
-```
-
-When deleting multiple elements, always delete from highest index to lowest to avoid index shifting.
-
-### Step 6: Screenshot and verify every slide
-
-After building each slide:
-
+### Step 4: Verify every slide
+CRITICAL: Always screenshot and visually inspect after building each slide.
 ```
 screenshot_slide(slide_number=N, output_path="/tmp/slideN.png")
 ```
-
-Then read the image to visually verify. Check for:
-- Text clipping (only partial text visible)
-- Element overlaps
+Read the image. Check for:
+- Text clipping (only 1-2 characters visible)
+- Element overlaps (compare y + height vs next element y)
 - Content overflowing slide edges
 - Alignment issues
 
-Fix problems before moving to the next slide.
+Fix with `move_element`, `resize_element`, or `edit_text_item`.
 
-## Design Patterns: Landing Page Style
+### Step 5: Build animations (optional)
+Add click-to-reveal effects so content appears incrementally during presentation:
+```
+get_slide_content(slide_number=N)
+add_builds_to_slide(slide_number=N, element_indices="5,7,9,11,13")
+```
+- Auto-skips bullet dot items ("•")
+- Requires Keynote frontmost + Accessibility permissions
+- ~6 seconds per element (UI scripting)
+- See `references/build-animation-reference.md` for details
 
-Treat each slide as one section of a landing page. One idea per slide. Max content:
+## Design Principles
+
+Treat each slide as one section of a landing page. **One idea per slide.**
+
+Maximum content per slide:
 - 1 title + 1 subtitle + 3-5 bullets, OR
 - 1 title + 1 code block (6 lines max), OR
 - 1 centered quote/statement
 
 ### Font hierarchy
-- 96pt: Hero title only (requires resize workaround)
-- 64-72pt: Section titles
-- 48pt: Large statements or quotes
-- 28-32pt: Subtitles
-- 24-26pt: Body text and bullets
-- 20pt: Code blocks
-- 18pt: Footnotes and captions
+| Size | Use |
+|------|-----|
+| 96pt | Hero title only (needs resize workaround) |
+| 64-72pt | Section titles |
+| 48pt | Large statements/quotes |
+| 28-32pt | Subtitles |
+| 24-26pt | Body text, bullets |
+| 20pt | Code blocks |
+| 18pt | Footnotes, captions |
 
 ### Recommended fonts
-- Titles: "Helvetica Neue Bold" or "Helvetica Neue"
-- Subtitles/body: "Helvetica Neue Light"
-- Code: "Menlo" or "Monaco"
+- Titles: "Helvetica Neue Bold"
+- Subtitles: "Helvetica Neue Light"
+- Code: "Menlo"
 
-## Slide Templates
+## Working with Existing Presentations
 
-### Hero slide
-```
-add_title(slide=1, title="Product Name", x=CENTER, y=260, font_size=96)
-# Then resize + edit_text_item to fix clipping
-add_subtitle(slide=1, subtitle="One-line tagline", x=CENTER, y=440, font_size=32)
-add_text_box(slide=1, text="tag1 // tag2 // tag3", x=CENTER, y=520)
-add_text_box(slide=1, text="github.com/org/repo", x=CENTER, y=960)
-```
+When adding to an existing deck:
+1. `duplicate_slide(slide_number=N)` — preserves theme/background
+2. `clear_slide(slide_number=M)` — removes content, keeps background
+3. Build new content on the cleared slide
 
-### Statement slide
-```
-add_quote(slide=2, quote="Provocative question?", x=280, y=380, font_size=48)
-```
+See `references/existing-presentation-guide.md` for patterns.
 
-### Title + bullets slide
-```
-add_title(slide=N, title="Section Name", x=CENTER, y=100, font_size=64)
-add_subtitle(slide=N, subtitle="Context line", x=CENTER, y=190, font_size=26)
-add_bullet_list(slide=N, items=[...], x=350, y=340, font_size=26)
-```
+## Element Management
 
-### Code demo slide
-```
-add_title(slide=N, title="How It Works", x=CENTER, y=80, font_size=56)
-add_subtitle(slide=N, subtitle="Short explainer", x=CENTER, y=165, font_size=28)
-add_code_block(slide=N, code="...", x=350, y=300, font_size=20, font_name="Menlo")
-```
+- Always `get_slide_content` before modifying elements
+- Delete from **highest index to lowest** to avoid index shifting
+- Theme placeholder ghosts at (0,0) cannot be deleted — ignore them
+- Calculate overlaps: if element at y=300 has height=638, it extends to y=938
 
-### Closing slide
-```
-add_title(slide=N, title="Big closing statement.", x=CENTER, y=340, font_size=56)
-add_subtitle(slide=N, subtitle="Supporting line.", x=CENTER, y=430, font_size=30)
-add_text_box(slide=N, text="repo link", x=CENTER, y=580)
-add_text_box(slide=N, text="License // Credits", x=CENTER, y=960)
-```
+## Troubleshooting
 
-## Build Animations (Appear One-by-One)
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| Text shows 1-2 chars | Font too large for auto-sized box | resize_element + edit_text_item |
+| No background visible | Theme incompatible with Blank | Use Slate, Bold Colour, or Basic Black |
+| Elements overlap | Multi-line content taller than expected | get_slide_content → check heights → move_element |
+| MCP returns old behavior | Server running old code | Restart MCP server (/mcp or restart session) |
 
-### Batch builds (recommended)
-```
-# 1. Check slide content to find indices
-get_slide_content(slide_number=4)
+## Performance Notes
+- Take your time with each slide. Quality is more important than speed.
+- Do not skip the screenshot verification step.
+- When in doubt about coordinates, use get_slide_content to check actual positions.
 
-# 2. Apply builds to all content items (auto-skips "•" dot items)
-add_builds_to_slide(slide_number=4, element_indices="5,7,9,11,13,15,17,19,21")
-```
-
-### Single element builds
-```
-add_build_in(slide_number=10, element_type="text", element_index=18, effect="Appear", delivery="By Paragraph")
-remove_build_in(slide_number=10, element_type="text", element_index=18)
-```
-
-Effects: `Appear`, `Dissolve`, `Move In`, `Fade and Move`, `Scale`, `Pop`, `Typewriter`
-
-**Notes**: Uses UI scripting (~6s per element). Keynote must be frontmost with accessibility permissions. Bullet dots stay visible as outline; text appears on click.
-
-## Common Issues
-
-### Text shows only 1-2 characters
-Cause: Font size too large for auto-sized text box.
-Solution: `resize_element` to make box bigger, then `edit_text_item` to restore text.
-
-### Theme background not visible
-Cause: Some themes (Gradient, Minimalist Dark) don't apply backgrounds to Blank slides.
-Solution: Use "Slate", "Bold Colour", or "Basic Black" themes. See `references/theme-reference.md`.
-
-### Elements overlap
-Cause: Multi-line text (bullets, code) takes more vertical space than estimated.
-Solution: `get_slide_content` to check actual heights, then `move_element` to fix.
-
-### Cannot delete empty elements
-Cause: Theme placeholder artifacts at position (0,0). They are invisible and harmless.
-Solution: Ignore them.
-
-### MCP server returns old behavior after code changes
-Cause: MCP server process is still running old code.
-Solution: Restart Claude Code session or use `/mcp` to restart the server.
-
-## Checklist
-
-1. `get_slide_size` to confirm 1920x1080
-2. `get_available_themes` and pick theme (Slate recommended)
+## Quick Reference Checklist
+1. `get_slide_size` → confirm dimensions
+2. `get_available_themes` → pick theme (Slate recommended)
 3. `create_presentation` with theme
-4. Add all slides in batch
-5. Set slide 1 to "Blank" layout if not already
-6. Build content using templates above
-7. For large titles: add, get index, resize box, edit text if truncated
-8. Screenshot each slide and read image to verify
-9. Fix overlaps via get_slide_content + move_element
+4. Add all slides, set to Blank layout
+5. Build content using templates from `references/slide-templates.md`
+6. For large titles (>48pt): add → get index → resize → edit_text_item
+7. Screenshot each slide → Read image → verify
+8. Fix overlaps: get_slide_content → calculate → move_element
+9. Add build animations if needed
 10. Final screenshot pass of all slides
