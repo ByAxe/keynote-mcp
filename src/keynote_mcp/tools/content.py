@@ -521,6 +521,62 @@ class ContentTools:
                 }
             ),
             Tool(
+                name="add_build_in",
+                description="Add a Build In animation to an element so it appears step-by-step (e.g. bullets one by one on click). Uses UI scripting — requires Accessibility permissions.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, or shape",
+                            "enum": ["text", "image", "shape"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        },
+                        "effect": {
+                            "type": "string",
+                            "description": "Animation effect name (default: Appear). Options: Appear, Dissolve, Fly In, Move In, Fade and Move, etc.",
+                            "default": "Appear"
+                        },
+                        "delivery": {
+                            "type": "string",
+                            "description": "How to deliver the animation. Options: All at Once, By Paragraph, By Paragraph Group, By Highlighted Paragraph",
+                            "default": "By Paragraph"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index"]
+                }
+            ),
+            Tool(
+                name="remove_build_in",
+                description="Remove Build In animation from an element. Uses UI scripting.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, or shape",
+                            "enum": ["text", "image", "shape"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index"]
+                }
+            ),
+            Tool(
                 name="add_shape",
                 description="Create a rectangle shape with optional position, size, and opacity",
                 inputSchema={
@@ -1264,4 +1320,208 @@ class ContentTools:
             ''')
             return [TextContent(type="text", text=f"Added shape to slide {slide_number} at ({x_pos}, {y_pos}), size {w}x{h}, opacity {op}.")]
         except Exception as e:
-            return [TextContent(type="text", text=f"Failed to add shape: {str(e)}")] 
+            return [TextContent(type="text", text=f"Failed to add shape: {str(e)}")]
+
+    def _get_window_title(self, doc_name: str = "") -> str:
+        """Get the Keynote window title for UI scripting."""
+        result = self.runner.run_inline_script(f'''
+            tell application "Keynote"
+                if "{doc_name}" is "" then
+                    return name of front document
+                else
+                    return "{doc_name}"
+                end if
+            end tell
+        ''')
+        return result.strip()
+
+    async def add_build_in(self, slide_number: int, element_type: str, element_index: int,
+                           effect: str = "Appear", delivery: str = "By Paragraph") -> List[TextContent]:
+        """Add a Build In animation to an element using UI scripting (System Events)."""
+        try:
+            validate_slide_number(slide_number)
+            as_type = self._ELEMENT_TYPE_MAP.get(element_type, "text item")
+            win_title = self._get_window_title()
+
+            # Full UI scripting flow:
+            # 1. Select element  2. Open Animate inspector  3. Build In tab
+            # 4. Add effect  5. Set delivery
+            self.runner.run_inline_script(f'''
+                -- Step 1: Select element
+                tell application "Keynote"
+                    activate
+                    tell front document
+                        set current slide to slide {slide_number}
+                        set the selection to {{{as_type} {element_index} of slide {slide_number}}}
+                    end tell
+                end tell
+                delay 0.5
+
+                -- Step 2: Open Animate inspector
+                tell application "System Events"
+                    tell application process "Keynote"
+                        click menu item "Animate" of menu 1 of menu item "Inspector" of menu 1 of menu bar item "View" of menu bar 1
+                    end tell
+                end tell
+                delay 0.5
+
+                -- Step 3: Click Build In tab (radio button 1 = Build In, 2 = Action, 3 = Build Out)
+                -- Radio buttons have no name, only description, so use index
+                tell application "System Events"
+                    tell application process "Keynote"
+                        set targetWin to window "{win_title}"
+                        click radio button 1 of radio group 1 of targetWin
+                    end tell
+                end tell
+                delay 0.3
+
+                -- Step 4: Click "Add an Effect" or "Change" button
+                tell application "System Events"
+                    tell application process "Keynote"
+                        set targetWin to window "{win_title}"
+                        set btnName to ""
+                        try
+                            get button "Add an Effect" of targetWin
+                            set btnName to "Add an Effect"
+                        end try
+                        if btnName is "" then
+                            try
+                                get button "Change" of targetWin
+                                set btnName to "Change"
+                            end try
+                        end if
+                        if btnName is "" then
+                            error "Could not find Add an Effect or Change button"
+                        end if
+                        click button btnName of targetWin
+                    end tell
+                end tell
+                -- MUST break out of tell block to let Keynote show the popover
+                delay 2
+
+                -- Select effect from popover
+                -- NOTE: "Add an Effect" puts popover on the button; "Change" puts it on the window
+                tell application "System Events"
+                    tell application process "Keynote"
+                        set targetWin to window "{win_title}"
+                        set po to missing value
+                        try
+                            set po to pop over 1 of button "Add an Effect" of targetWin
+                        end try
+                        if po is missing value then
+                            try
+                                set po to pop over 1 of button "Change" of targetWin
+                            end try
+                        end if
+                        if po is missing value then
+                            try
+                                set po to pop over 1 of targetWin
+                            end try
+                        end if
+                        if po is missing value then
+                            error "Could not find effect popover"
+                        end if
+                        click button "{effect}" of scroll area 1 of po
+                    end tell
+                end tell
+                delay 0.5
+
+                -- Step 5: Set delivery if not "All at Once"
+                if "{delivery}" is not "All at Once" then
+                    tell application "System Events"
+                        tell application process "Keynote"
+                            set targetWin to window "{win_title}"
+                            -- Delivery is pop up button 3 in scroll area 1 of the window
+                            set deliveryPopup to pop up button 3 of scroll area 1 of targetWin
+                            click deliveryPopup
+                            delay 0.3
+                            click menu item "{delivery}" of menu 1 of deliveryPopup
+                        end tell
+                    end tell
+                    delay 0.3
+                end if
+            ''')
+
+            return [TextContent(
+                type="text",
+                text=f"Added Build In '{effect}' with delivery '{delivery}' to {element_type} {element_index} on slide {slide_number}."
+            )]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to add build in: {str(e)}")]
+
+    async def remove_build_in(self, slide_number: int, element_type: str, element_index: int) -> List[TextContent]:
+        """Remove Build In animation from an element using UI scripting."""
+        try:
+            validate_slide_number(slide_number)
+            as_type = self._ELEMENT_TYPE_MAP.get(element_type, "text item")
+            win_title = self._get_window_title()
+
+            self.runner.run_inline_script(f'''
+                -- Select element
+                tell application "Keynote"
+                    activate
+                    tell front document
+                        set current slide to slide {slide_number}
+                        set the selection to {{{as_type} {element_index} of slide {slide_number}}}
+                    end tell
+                end tell
+                delay 0.5
+
+                -- Open Animate inspector, Build In tab
+                tell application "System Events"
+                    tell application process "Keynote"
+                        click menu item "Animate" of menu 1 of menu item "Inspector" of menu 1 of menu bar item "View" of menu bar 1
+                    end tell
+                end tell
+                delay 0.5
+
+                tell application "System Events"
+                    tell application process "Keynote"
+                        set targetWin to window "{win_title}"
+                        -- Build In = radio button 1 (no name, use index)
+                        click radio button 1 of radio group 1 of targetWin
+                        delay 0.3
+
+                        -- Check for "Change" button (means build exists)
+                        try
+                            get button "Change" of targetWin
+                        on error
+                            -- No build exists (button is "Add an Effect"), nothing to remove
+                            return "no_build"
+                        end try
+
+                        click button "Change" of targetWin
+                    end tell
+                end tell
+                -- MUST break out of tell block to let Keynote show the popover
+                delay 2
+
+                -- Select "None" from the popover
+                -- "Change" button puts popover on the window (not on the button)
+                tell application "System Events"
+                    tell application process "Keynote"
+                        set targetWin to window "{win_title}"
+                        set po to missing value
+                        try
+                            set po to pop over 1 of targetWin
+                        end try
+                        if po is missing value then
+                            try
+                                set po to pop over 1 of button "Change" of targetWin
+                            end try
+                        end if
+                        if po is missing value then
+                            error "Could not find effect popover for removal"
+                        end if
+                        click button "None" of scroll area 1 of po
+                    end tell
+                end tell
+                delay 0.3
+            ''')
+
+            return [TextContent(
+                type="text",
+                text=f"Removed Build In from {element_type} {element_index} on slide {slide_number}."
+            )]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to remove build in: {str(e)}")]

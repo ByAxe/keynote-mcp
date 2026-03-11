@@ -284,6 +284,20 @@ class KeynoteMCPServer:
                         opacity=arguments["opacity"],
                         doc_name=arguments.get("doc_name", "")
                     )
+                elif name == "add_build_in":
+                    return await self.content_tools.add_build_in(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"],
+                        effect=arguments.get("effect", "Appear"),
+                        delivery=arguments.get("delivery", "By Paragraph")
+                    )
+                elif name == "remove_build_in":
+                    return await self.content_tools.remove_build_in(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"]
+                    )
                 elif name == "add_shape":
                     return await self.content_tools.add_shape(
                         slide_number=arguments["slide_number"],

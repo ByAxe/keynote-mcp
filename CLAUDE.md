@@ -31,7 +31,8 @@ src/
       slide.py             — add/delete/duplicate/move slides, layouts
       content.py           — add text boxes (font/color)/titles/subtitles/lists/code (color)/
                              quotes/images/shapes (opacity), edit/delete/move/resize elements,
-                             set_element_opacity, clear_slide, speaker notes, get_slide_content
+                             set_element_opacity, clear_slide, speaker notes, get_slide_content,
+                             build-in animations (add_build_in/remove_build_in via UI scripting)
       export.py            — screenshot slides, export PDF
       unsplash.py          — search/add Unsplash images (requires UNSPLASH_KEY env var)
     utils/

@@ -116,7 +116,7 @@ cp -r skills/keynote-presentation ~/.claude/skills/keynote-presentation
 |----------|-------|
 | **Presentation** | create, open, save, close, list, themes, resolution, slide size |
 | **Slides** | add, delete, duplicate, move, select, layouts, slide info |
-| **Content** | text boxes (with font/color control), titles, subtitles, bullet lists, numbered lists, code blocks (with color), quotes, images, shapes (with opacity), edit, delete, move, resize elements, set element opacity, clear slide, speaker notes |
+| **Content** | text boxes (with font/color control), titles, subtitles, bullet lists, numbered lists, code blocks (with color), quotes, images, shapes (with opacity), edit, delete, move, resize elements, set element opacity, clear slide, speaker notes, build-in animations (add/remove via UI scripting) |
 | **Export** | screenshot slides, export PDF |
 | **Unsplash** | search images, add to slides, random images (requires `UNSPLASH_KEY`) |
 

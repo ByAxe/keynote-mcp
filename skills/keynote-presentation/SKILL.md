@@ -178,6 +178,24 @@ add_text_box(slide=N, text="repo link", x=CENTER, y=580)
 add_text_box(slide=N, text="License // Credits", x=CENTER, y=960)
 ```
 
+## Build Animations (Appear One-by-One)
+
+To make bullet lists or other elements appear incrementally during the slideshow:
+
+```
+# Make bullets appear one at a time on click
+add_build_in(slide_number=10, element_type="text", element_index=18, effect="Appear", delivery="By Paragraph")
+
+# Remove animation
+remove_build_in(slide_number=10, element_type="text", element_index=18)
+```
+
+Effects: `Appear`, `Dissolve`, `Move In`, `Fade and Move`, `Scale`, `Pop`, `Typewriter`
+
+Delivery: `All at Once`, `By Paragraph` (for bullet-by-bullet), `By Highlighted Paragraph`
+
+**Notes**: Uses UI scripting — Keynote must be active with accessibility permissions. For PDF with build stages: File > Export to > PDF > check "Print each stage of builds".
+
 ## Common Issues
 
 ### Text shows only 1-2 characters
