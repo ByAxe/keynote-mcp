@@ -94,6 +94,9 @@ isort src/ tests/
 - Editing `.applescript` files won't take effect until they're compiled to `.scpt` and the MCP server is restarted.
 - Keynote must be running and have accessibility permissions for AppleScript to work.
 - The `osascript` subprocess has a 30-second timeout — complex operations on large presentations may fail.
+- **Build animations (`add_build_in`)** require calling `select_slide` first when changing slides, otherwise the Animate inspector popover won't appear (error -2700).
+- **Not accessible via AppleScript/MCP:** connection line routing between shapes, build order reordering, "With Previous" build timing. These require manual fixes in Keynote's UI.
+- **Always check original property values before modifying** (e.g., `get_slide_content` before changing opacity). Don't assume default values — existing presentations may use different settings than what the skill recommends for new slides.
 
 ## Adding a new tool
 

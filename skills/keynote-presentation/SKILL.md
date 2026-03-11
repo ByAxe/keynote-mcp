@@ -121,12 +121,15 @@ See `references/existing-presentation-guide.md` for patterns.
 
 ## Troubleshooting
 
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| Text shows 1-2 chars | Font too large for auto-sized box | resize_element + edit_text_item |
-| No background visible | Theme incompatible with Blank | Use Slate, Bold Colour, or Basic Black |
-| Elements overlap | Multi-line content taller than expected | get_slide_content → check heights → move_element |
-| MCP returns old behavior | Server running old code | Restart MCP server (/mcp or restart session) |
+| Problem | Fix |
+|---------|-----|
+| Text shows 1-2 chars | resize_element + edit_text_item |
+| No background visible | Use Slate, Bold Colour, or Basic Black |
+| Elements overlap | get_slide_content → check heights → move_element |
+| MCP old behavior | Restart server (/mcp) |
+| add_build_in popover error | Call `select_slide` first, then retry |
+
+See `references/troubleshooting-and-limitations.md` for detailed limitations and known issues.
 
 ## Performance Notes
 - Take your time with each slide. Quality is more important than speed.
