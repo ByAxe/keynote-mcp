@@ -92,8 +92,6 @@ isort src/ tests/
 - Editing `.applescript` files won't take effect until they're compiled to `.scpt` and the MCP server is restarted.
 - Keynote must be running and have accessibility permissions for AppleScript to work.
 - The `osascript` subprocess has a 30-second timeout — complex operations on large presentations may fail.
-- The Makefile still has Chinese comments — translate if touching it.
-- `env.example` still has Chinese comments — translate if touching it.
 
 ## Adding a new tool
 

@@ -1,47 +1,42 @@
 ---
-name: 问题咨询
-about: 询问关于使用或配置的问题
+name: Question
+about: Ask a question about usage or configuration
 title: '[QUESTION] '
 labels: ['question', 'needs-triage']
 assignees: ''
 
 ---
 
-## ❓ 问题描述
-请清楚地描述您的问题。
+## Question
+Please clearly describe your question.
 
-## 🎯 您想要实现什么
-描述您想要达到的目标或完成的任务。
+## What are you trying to achieve?
+Describe the goal or task you're trying to accomplish.
 
-## 🔧 您尝试了什么
-描述您已经尝试过的方法或步骤。
+## What have you tried?
+Describe what you've already attempted.
 
-## 📋 相关代码
-如果适用，请提供相关的代码片段：
+## Relevant Code
+If applicable, provide relevant code snippets:
 
 ```python
-# 您的代码
+# Your code here
 ```
 
-## 💻 环境信息
-- **操作系统**: [例如 macOS 14.1]
-- **Python 版本**: [例如 3.11.0]
-- **Keynote 版本**: [例如 13.2]
-- **项目版本**: [例如 1.0.0]
+## Environment
+- **OS**: [e.g. macOS 14.1]
+- **Python version**: [e.g. 3.11.0]
+- **Keynote version**: [e.g. 13.2]
+- **Project version**: [e.g. 1.0.0]
 
-## 📚 您查阅了哪些文档
+## Documentation Checked
 - [ ] README.md
-- [ ] 使用文档
-- [ ] API 文档
-- [ ] 示例代码
-- [ ] 常见问题解答
+- [ ] CLAUDE.md
+- [ ] Example code
+- [ ] Existing issues
 
-## 🔍 错误信息
-如果有错误信息，请提供：
-
+## Error Message
+If applicable:
 ```
-错误信息
+Error message here
 ```
-
-## 📝 附加信息
-添加任何其他有助于回答您问题的信息。 

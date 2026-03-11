@@ -1,96 +1,67 @@
-# 更新日志
+# Changelog
 
-本文档记录了 Keynote-MCP 项目的所有重要更改。
+All notable changes to this project will be documented in this file.
 
-格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
-并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/) 规范。
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [未发布]
+## [Unreleased]
 
-### 新增
-- 初始项目结构和 MCP 服务器框架
-- 完整的 AppleScript 脚本库
-- 演示文稿管理工具集
-- 幻灯片操作工具集
-- 内容管理工具集
-- 导出和截图工具集
-- Unsplash 配图集成功能
-- 完整的错误处理机制
-- 单元测试和集成测试
-- 详细的使用文档和示例
+### Added
+- Initial project structure and MCP server framework
+- Complete AppleScript script library
+- Presentation management tools
+- Slide operation tools
+- Content management tools
+- Export and screenshot tools
+- Unsplash image integration
+- Complete error handling mechanism
+- Unit and integration tests
+- Detailed documentation and examples
 
-### 功能特性
-- 🎯 **演示文稿管理**
-  - 创建、打开、保存、关闭演示文稿
-  - 主题设置和信息获取
-  - 分辨率和尺寸查询
+### Features
+- **Presentation Management**
+  - Create, open, save, close presentations
+  - Theme settings and info retrieval
+  - Resolution and size queries
 
-- 🔧 **幻灯片操作**
-  - 添加、删除、复制、移动幻灯片
-  - 布局设置和信息查询
-  - 幻灯片选择和计数
+- **Slide Operations**
+  - Add, delete, duplicate, move slides
+  - Layout settings and info queries
+  - Slide selection and counting
 
-- 📝 **内容管理**
-  - 文本框、标题、副标题添加
-  - 项目符号和编号列表
-  - 代码块和引用文本
-  - 图片添加和管理
+- **Content Management**
+  - Text boxes, titles, subtitles
+  - Bullet and numbered lists
+  - Code blocks and quotes
+  - Image management
 
-- 📸 **导出功能**
-  - 幻灯片截图
-  - PDF 导出
-  - 图片序列导出
+- **Export**
+  - Slide screenshots
+  - PDF export
 
-- 🖼️ **Unsplash 集成**
-  - 图片搜索和筛选
-  - 自动下载和添加
-  - 随机图片获取
-  - 摄影师署名支持
+- **Unsplash Integration**
+  - Image search and filtering
+  - Auto download and add to slides
+  - Random image retrieval
+  - Photographer attribution
 
-### 技术实现
-- 基于 MCP (Model Context Protocol) 协议
-- 使用 AppleScript 进行 Keynote 自动化
-- 异步 Python 架构
-- 完整的类型提示
-- 模块化设计
+### Technical
+- Based on MCP (Model Context Protocol)
+- AppleScript-based Keynote automation
+- Async Python architecture
+- Complete type hints
+- Modular design
 
-### 开发工具
-- 完整的测试套件
-- 代码格式化和检查
-- 持续集成配置
-- 详细的开发文档
+### Development
+- Full test suite
+- Code formatting and linting
+- CI configuration
+- Detailed developer documentation
 
-## [1.0.0] - 待发布
+## [1.0.0] - Upcoming
 
-### 新增
-- 首个正式版本发布
-- 完整的功能集和文档
-- 生产就绪的代码质量
-
----
-
-## 版本说明
-
-### 版本号格式
-版本号格式为 `MAJOR.MINOR.PATCH`，其中：
-- **MAJOR**: 不兼容的 API 更改
-- **MINOR**: 向后兼容的功能新增
-- **PATCH**: 向后兼容的问题修复
-
-### 更改类型
-- **新增**: 新功能
-- **更改**: 现有功能的更改
-- **弃用**: 即将移除的功能
-- **移除**: 已移除的功能
-- **修复**: 问题修复
-- **安全**: 安全相关的更改
-
-### 发布计划
-- **Alpha**: 内部测试版本
-- **Beta**: 公开测试版本
-- **RC**: 发布候选版本
-- **Stable**: 稳定正式版本
-
----
-
-*更多详细信息请参阅 [GitHub Releases](https://github.com/easychen/keynote-mcp/releases)* 
+### Added
+- First official release
+- Complete feature set and documentation
+- Production-ready code quality

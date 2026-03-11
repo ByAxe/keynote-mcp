@@ -1,62 +1,62 @@
 # Keynote-MCP Makefile
 
-.PHONY: help install install-dev test lint format clean build upload docs
+.PHONY: help install install-dev test lint format clean build upload
 
-# 默认目标
-help: ## 显示帮助信息
-	@echo "Keynote-MCP 开发工具"
+# Default target
+help: ## Show help
+	@echo "Keynote-MCP Development Tools"
 	@echo ""
-	@echo "可用命令:"
+	@echo "Available commands:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-# 安装相关
-install: ## 安装项目依赖
+# Installation
+install: ## Install project dependencies
 	pip install -r requirements.txt
 
-install-dev: ## 安装开发依赖
+install-dev: ## Install development dependencies
 	pip install -r requirements-dev.txt
 	pip install -e .
 
-install-all: install install-dev ## 安装所有依赖
+install-all: install install-dev ## Install all dependencies
 
-# 代码质量
-lint: ## 运行代码检查
-	@echo "运行 flake8..."
+# Code quality
+lint: ## Run linters
+	@echo "Running flake8..."
 	flake8 src/ tests/
-	@echo "运行 mypy..."
+	@echo "Running mypy..."
 	mypy src/
-	@echo "运行 bandit..."
+	@echo "Running bandit..."
 	bandit -r src/
-	@echo "运行 safety..."
+	@echo "Running safety..."
 	safety check
 
-format: ## 格式化代码
-	@echo "运行 black..."
+format: ## Format code
+	@echo "Running black..."
 	black src/ tests/
-	@echo "运行 isort..."
+	@echo "Running isort..."
 	isort src/ tests/
 
-format-check: ## 检查代码格式
-	@echo "检查 black..."
+format-check: ## Check code formatting
+	@echo "Checking black..."
 	black --check src/ tests/
-	@echo "检查 isort..."
+	@echo "Checking isort..."
 	isort --check-only src/ tests/
 
-# 测试相关
-test: ## 运行测试
+# Testing
+test: ## Run tests
 	pytest tests/ -v
 
-test-cov: ## 运行测试并生成覆盖率报告
+test-cov: ## Run tests with coverage report
 	pytest tests/ -v --cov=keynote_mcp --cov-report=html --cov-report=term
 
-test-unit: ## 运行单元测试
+test-unit: ## Run unit tests
 	pytest tests/ -v -m "unit"
 
-test-integration: ## 运行集成测试
+test-integration: ## Run integration tests
 	pytest tests/ -v -m "integration"
 
-# 构建和发布
-clean: ## 清理构建文件
+# Build and publish
+clean: ## Clean build files
 	rm -rf build/
 	rm -rf dist/
 	rm -rf *.egg-info/
@@ -66,69 +66,54 @@ clean: ## 清理构建文件
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
-build: clean ## 构建包
+build: clean ## Build package
 	python -m build
 
-upload-test: build ## 上传到测试 PyPI
+upload-test: build ## Upload to test PyPI
 	twine upload --repository testpypi dist/*
 
-upload: build ## 上传到 PyPI
+upload: build ## Upload to PyPI
 	twine upload dist/*
 
-# 文档相关
-docs: ## 生成文档
-	@if [ -d "docs" ]; then \
-		cd docs && make html; \
-	else \
-		echo "docs 目录不存在"; \
-	fi
+# Development
+dev-setup: ## Set up development environment
+	python -m venv .venv
+	@echo "Run: source .venv/bin/activate"
+	@echo "Then: make install-all"
 
-docs-serve: docs ## 启动文档服务器
-	@if [ -d "docs/_build/html" ]; then \
-		cd docs/_build/html && python -m http.server 8000; \
-	else \
-		echo "请先运行 make docs"; \
-	fi
-
-# 开发相关
-dev-setup: ## 设置开发环境
-	python -m venv venv
-	@echo "请运行: source venv/bin/activate"
-	@echo "然后运行: make install-all"
-
-server: ## 启动 MCP 服务器
+server: ## Start MCP server
 	python start_server.py
 
-demo: ## 运行演示
+demo: ## Run demo
 	python examples/basic_usage.py
 
-# 检查相关
-check-all: format-check lint test ## 运行所有检查
+# Checks
+check-all: format-check lint test ## Run all checks
 
-pre-commit: format lint test ## 提交前检查
+pre-commit: format lint test ## Pre-commit checks
 
-# 版本相关
-version: ## 显示版本信息
+# Version
+version: ## Show version info
 	@python -c "import keynote_mcp; print(f'Version: {keynote_mcp.__version__}')"
 
-# 环境相关
-env-check: ## 检查环境配置
-	@echo "Python 版本:"
+# Environment
+env-check: ## Check environment
+	@echo "Python version:"
 	@python --version
-	@echo "虚拟环境:"
+	@echo "Virtual environment:"
 	@which python
-	@echo "已安装包:"
+	@echo "Installed packages:"
 	@pip list | grep -E "(keynote|mcp|aiohttp|pytest)"
 
-# Git 相关
-git-clean: ## 清理 Git 仓库
+# Git
+git-clean: ## Clean git repository
 	git clean -fd
 	git reset --hard HEAD
 
-# 帮助信息
-info: ## 显示项目信息
-	@echo "项目: Keynote-MCP"
-	@echo "描述: 一个专为大模型设计的 MCP 套件"
-	@echo "版本: $(shell python -c 'import keynote_mcp; print(keynote_mcp.__version__)')"
+# Project info
+info: ## Show project info
+	@echo "Project: Keynote-MCP"
+	@echo "Description: MCP server for Apple Keynote automation"
+	@echo "Version: $(shell python -c 'import keynote_mcp; print(keynote_mcp.__version__)')"
 	@echo "Python: $(shell python --version)"
-	@echo "路径: $(shell pwd)" 
+	@echo "Path: $(shell pwd)"

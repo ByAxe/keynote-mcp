@@ -1,62 +1,38 @@
 ---
-name: 功能请求
-about: 为这个项目建议一个想法
+name: Feature Request
+about: Suggest an idea for this project
 title: '[FEATURE] '
 labels: ['enhancement', 'needs-triage']
 assignees: ''
 
 ---
 
-## 🚀 功能请求
+## Feature Description
+A clear and concise description of the feature you'd like.
 
-### 📋 功能描述
-简洁明了地描述您想要的功能。
+## Problem
+Is your feature request related to a problem? Please describe.
 
-### 🎯 问题描述
-您的功能请求是否与某个问题相关？请描述一下。
-例如：我总是因为 [...] 而感到沮丧
+## Proposed Solution
+Describe the solution you'd like.
 
-### 💡 解决方案
-描述您希望实现的解决方案。
+## Alternatives Considered
+Describe any alternative solutions or features you've considered.
 
-### 🔄 替代方案
-描述您考虑过的任何替代解决方案或功能。
+## Use Case
+1. As a [user type]
+2. I want [feature]
+3. So that [goal/benefit]
 
-### 📊 使用场景
-描述这个功能的具体使用场景：
-1. 作为 [用户类型]
-2. 我想要 [功能]
-3. 以便 [目标/收益]
+## Priority
+- [ ] High - blocks core functionality
+- [ ] Medium - important but not urgent
+- [ ] Low - nice to have
 
-### 🎨 界面设计
-如果适用，请描述或绘制您期望的用户界面。
+## Additional Context
+Add any other context or screenshots about the feature request.
 
-### 📈 优先级
-请选择此功能的优先级：
-- [ ] 高 - 阻碍核心功能
-- [ ] 中 - 重要但不紧急
-- [ ] 低 - 不错的增强功能
-
-### 🔧 技术考虑
-如果您有技术背景，请描述：
-- 可能的实现方式
-- 技术挑战
-- 性能影响
-- 兼容性考虑
-
-### 📚 相关资源
-提供任何相关的链接、文档或参考资料：
-- 相关的 API 文档
-- 类似功能的实现
-- 用户研究或反馈
-
-### ✅ 检查清单
-请在提交之前检查以下内容：
-- [ ] 我已经搜索了现有的 issues 和功能请求
-- [ ] 我已经检查了项目路线图
-- [ ] 我已经考虑了这个功能的维护成本
-- [ ] 我已经描述了具体的使用场景
-- [ ] 我已经考虑了替代方案
-
-### 📝 附加信息
-添加任何其他关于功能请求的上下文或屏幕截图。 
+## Checklist
+- [ ] I have searched existing issues and feature requests
+- [ ] I have described a specific use case
+- [ ] I have considered alternatives

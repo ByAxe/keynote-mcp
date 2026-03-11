@@ -1,112 +1,107 @@
-# 贡献指南
+# Contributing Guide
 
-感谢您对 Keynote-MCP 项目的关注！我们欢迎并感谢所有形式的贡献。
+Thank you for your interest in Keynote-MCP! We welcome and appreciate all forms of contribution.
 
-## 🎯 贡献方式
+## How to Contribute
 
-### 报告问题
-- 使用 [GitHub Issues](https://github.com/easychen/keynote-mcp/issues) 报告 bug
-- 提供尽可能详细的信息，包括：
-  - 操作系统版本
-  - Python 版本
-  - Keynote 版本
-  - 错误信息和步骤重现
+### Report Issues
+- Use [GitHub Issues](https://github.com/ByAxe/keynote-mcp/issues) to report bugs
+- Please include as much detail as possible:
+  - macOS version
+  - Python version
+  - Keynote version
+  - Error messages and steps to reproduce
 
-### 提出功能请求
-- 在 Issues 中使用 "Feature Request" 模板
-- 详细描述您希望的功能
-- 说明使用场景和价值
+### Feature Requests
+- Use the "Feature Request" template in Issues
+- Describe the feature you'd like in detail
+- Explain the use case and value
 
-### 代码贡献
-- Fork 本项目
-- 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-- 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-- 推送到分支 (`git push origin feature/AmazingFeature`)
-- 创建 Pull Request
+### Code Contributions
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Create a Pull Request
 
-## 🔧 开发环境设置
+## Development Setup
 
-### 1. 克隆项目
+### 1. Clone the project
 ```bash
-git clone https://github.com/easychen/keynote-mcp.git
+git clone https://github.com/ByAxe/keynote-mcp.git
 cd keynote-mcp
 ```
 
-### 2. 创建虚拟环境
+### 2. Create a virtual environment
 ```bash
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-### 3. 安装依赖
+### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
-pip install -r requirements-dev.txt  # 开发依赖
+pip install -r requirements-dev.txt
 ```
 
-### 4. 配置环境变量
+### 4. Configure environment variables
 ```bash
 cp env.example .env
-# 编辑 .env 文件，设置必要的环境变量
+# Edit .env and set required environment variables
 ```
 
-### 5. 运行测试
+### 5. Run tests
 ```bash
 pytest tests/
 ```
 
-## 📝 编码规范
+## Coding Standards
 
-### Python 代码风格
-- 遵循 [PEP 8](https://www.python.org/dev/peps/pep-0008/) 规范
-- 使用 4 个空格缩进
-- 行长度不超过 88 字符
-- 使用有意义的变量名和函数名
+### Python Code Style
+- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+- Use 4 spaces for indentation
+- Line length should not exceed 88 characters
+- Use meaningful variable and function names
 
-### 代码格式化
-我们使用以下工具进行代码格式化：
+### Code Formatting
+We use the following tools for code formatting:
 ```bash
-# 代码格式化
+# Format code
 black .
 
-# 导入排序
+# Sort imports
 isort .
 
-# 代码检查
+# Lint
 flake8 .
 
-# 类型检查
+# Type checking
 mypy src/
 ```
 
-### 注释和文档
-- 为所有公共函数和类添加文档字符串
-- 使用中文编写注释和文档
-- 复杂逻辑添加行内注释
+## Testing
 
-## 🧪 测试
-
-### 运行测试
+### Running Tests
 ```bash
-# 运行所有测试
+# Run all tests
 pytest
 
-# 运行特定测试文件
+# Run specific test file
 pytest tests/test_presentation.py
 
-# 运行带覆盖率的测试
+# Run with coverage
 pytest --cov=src tests/
 ```
 
-### 编写测试
-- 为新功能编写单元测试
-- 测试文件放在 `tests/` 目录下
-- 测试文件名以 `test_` 开头
-- 使用 pytest 框架
+### Writing Tests
+- Write unit tests for new features
+- Place test files in the `tests/` directory
+- Prefix test files with `test_`
+- Use the pytest framework
 
-## 📋 提交规范
+## Commit Convention
 
-### 提交信息格式
+### Commit Message Format
 ```
 <type>(<scope>): <subject>
 
@@ -115,98 +110,64 @@ pytest --cov=src tests/
 <footer>
 ```
 
-### 提交类型
-- `feat`: 新功能
-- `fix`: 修复 bug
-- `docs`: 文档更新
-- `style`: 代码格式修改
-- `refactor`: 代码重构
-- `test`: 测试相关
-- `chore`: 构建过程或辅助工具的变动
+### Commit Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation update
+- `style`: Code formatting changes
+- `refactor`: Code refactoring
+- `test`: Test-related changes
+- `chore`: Build process or tooling changes
 
-### 示例
+### Example
 ```
-feat(unsplash): 添加图片搜索功能
+feat(unsplash): add image search functionality
 
-- 实现 Unsplash API 集成
-- 支持关键词搜索
-- 支持图片方向筛选
+- Implement Unsplash API integration
+- Support keyword search
+- Support image orientation filtering
 
 Closes #123
 ```
 
-## 🔍 Pull Request 流程
+## Pull Request Process
 
-### 提交前检查
-- [ ] 代码通过所有测试
-- [ ] 代码符合格式规范
-- [ ] 添加了必要的测试
-- [ ] 更新了相关文档
-- [ ] 提交信息符合规范
+### Pre-submission Checklist
+- [ ] Code passes all tests
+- [ ] Code follows formatting standards
+- [ ] Necessary tests have been added
+- [ ] Related documentation has been updated
+- [ ] Commit messages follow the convention
 
-### PR 描述
-请在 PR 中包含：
-- 更改的简要描述
-- 相关的 Issue 编号
-- 测试说明
-- 截图（如适用）
+### PR Description
+Please include in your PR:
+- Brief description of changes
+- Related Issue number
+- Test instructions
+- Screenshots (if applicable)
 
-### 代码审查
-- 所有 PR 都需要通过代码审查
-- 至少需要一个维护者的批准
-- 自动化测试必须通过
+### Code Review
+- All PRs require code review
+- At least one maintainer approval is needed
+- Automated tests must pass
 
-## 🏗️ 项目结构
+## Community Guidelines
 
-```
-keynote-mcp/
-├── src/                    # 源代码
-│   ├── server.py          # MCP 服务器
-│   ├── tools/             # 工具模块
-│   ├── applescript/       # AppleScript 脚本
-│   └── utils/             # 工具函数
-├── tests/                 # 测试文件
-├── docs/                  # 文档
-├── examples/              # 示例代码
-└── scripts/               # 构建脚本
-```
+### Code of Conduct
+- Respect all participants
+- Use inclusive language
+- Accept constructive criticism
+- Focus on what's best for the community
 
-## 📚 开发资源
+### Communication
+- Use GitHub Issues for public discussion
+- Maintain a friendly and professional attitude
+- Respond promptly to comments and feedback
 
-### 文档
-- [MCP 协议文档](https://modelcontextprotocol.io/)
-- [AppleScript 语言指南](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/)
-- [Keynote 自动化指南](https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/)
+## Contact
 
-### 工具
-- [Visual Studio Code](https://code.visualstudio.com/) - 推荐的编辑器
-- [Python 扩展](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [AppleScript 扩展](https://marketplace.visualstudio.com/items?itemName=idleberg.applescript)
+If you have any questions:
 
-## 🤝 社区准则
+- Create a [GitHub Issue](https://github.com/ByAxe/keynote-mcp/issues)
 
-### 行为准则
-- 尊重所有参与者
-- 使用包容性语言
-- 接受建设性批评
-- 专注于对社区最有利的事情
-
-### 沟通
-- 使用 GitHub Issues 进行公开讨论
-- 保持友善和专业的态度
-- 及时回应评论和反馈
-
-## 📞 联系方式
-
-如有任何问题，请通过以下方式联系：
-
-- 创建 [GitHub Issue](https://github.com/easychen/keynote-mcp/issues)
-- 发送邮件至 [your-email@example.com](mailto:your-email@example.com)
-
-## 🎉 致谢
-
-感谢所有为 Keynote-MCP 项目做出贡献的开发者！
-
----
-
-再次感谢您的贡献！每一个 PR、Issue 和建议都让这个项目变得更好。 
+Thank you for contributing! Every PR, Issue, and suggestion makes this project better.

@@ -1,56 +1,43 @@
 ---
-name: Bug 报告
-about: 创建一个报告来帮助我们改进项目
+name: Bug Report
+about: Report a bug to help us improve
 title: '[BUG] '
 labels: ['bug', 'needs-triage']
 assignees: ''
 
 ---
 
-## 🐛 Bug 描述
-简洁明了地描述这个 bug 是什么。
+## Bug Description
+A clear and concise description of the bug.
 
-## 🔄 重现步骤
-重现此行为的步骤：
-1. 执行 '...'
-2. 点击 '....'
-3. 滚动到 '....'
-4. 看到错误
+## Steps to Reproduce
+1. Run '...'
+2. Do '...'
+3. See error
 
-## ✅ 预期行为
-简洁明了地描述您期望发生的情况。
+## Expected Behavior
+A clear description of what you expected to happen.
 
-## 📸 截图
-如果适用，请添加截图来帮助解释您的问题。
+## Screenshots
+If applicable, add screenshots to help explain the issue.
 
-## 💻 环境信息
-请完成以下信息：
-- **操作系统**: [例如 macOS 14.1]
-- **Python 版本**: [例如 3.11.0]
-- **Keynote 版本**: [例如 13.2]
-- **项目版本**: [例如 1.0.0]
+## Environment
+- **OS**: [e.g. macOS 14.1]
+- **Python version**: [e.g. 3.11.0]
+- **Keynote version**: [e.g. 13.2]
+- **Project version**: [e.g. 1.0.0]
 
-## 📋 附加信息
-- **错误日志**: 如果有的话，请粘贴相关的错误日志
-- **配置信息**: 相关的配置设置
-- **其他上下文**: 添加任何其他关于问题的上下文
-
-## 🔍 错误日志
+## Error Log
 ```
-请在此处粘贴错误日志
+Paste error log here
 ```
 
-## 🧪 测试用例
-如果可能，请提供一个最小的测试用例来重现这个问题：
+## Additional Context
+Any other context about the problem.
 
-```python
-# 您的测试代码
-```
-
-## ✅ 检查清单
-请在报告之前检查以下内容：
-- [ ] 我已经搜索了现有的 issues
-- [ ] 我已经尝试了最新版本
-- [ ] 我已经阅读了文档
-- [ ] 我已经提供了完整的环境信息
-- [ ] 我已经提供了重现步骤 
+## Checklist
+- [ ] I have searched existing issues
+- [ ] I have tried the latest version
+- [ ] I have read the documentation
+- [ ] I have provided complete environment info
+- [ ] I have provided reproduction steps

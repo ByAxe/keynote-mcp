@@ -8,16 +8,16 @@ on:
 jobs:
   release:
     runs-on: macos-latest
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.12"
 
     - name: Install dependencies
       run: |
@@ -39,25 +39,24 @@ jobs:
         draft: false
         prerelease: false
         body: |
-          ## 🎉 新版本发布
-          
-          ### 📋 更新内容
-          请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 获取详细更新内容。
-          
-          ### 📦 安装方式
+          ## New Release
+
+          ### Changes
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+
+          ### Install
           ```bash
           pip install keynote-mcp
           ```
-          
-          ### 🔧 升级方式
+
+          ### Upgrade
           ```bash
           pip install --upgrade keynote-mcp
           ```
-          
-          ### 📚 文档
-          - [使用文档](https://github.com/${{ github.repository }}/blob/main/README.md)
-          - [API 文档](https://github.com/${{ github.repository }}/blob/main/docs/)
-          - [示例代码](https://github.com/${{ github.repository }}/blob/main/examples/)
+
+          ### Documentation
+          - [README](https://github.com/${{ github.repository }}/blob/main/README.md)
+          - [Examples](https://github.com/${{ github.repository }}/blob/main/examples/)
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
@@ -75,4 +74,4 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        twine upload dist/* 
+        twine upload dist/*
