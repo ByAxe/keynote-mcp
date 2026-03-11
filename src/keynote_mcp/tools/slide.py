@@ -277,15 +277,23 @@ class SlideTools:
                     else
                         set targetDoc to document "{doc_name}"
                     end if
-                    
-                    set sourceSlide to slide {slide_number} of targetDoc
-                    set newSlide to duplicate sourceSlide
-                    
-                    if {new_position} is not 0 then
-                        move newSlide to slide {new_position} of targetDoc
-                    end if
-                    
-                    return slide number of newSlide
+
+                    tell targetDoc
+                        set sourceSlide to slide {slide_number}
+                        if {new_position} is 0 then
+                            -- Duplicate right after the source slide
+                            duplicate sourceSlide to after sourceSlide
+                            set newSlideNum to {slide_number} + 1
+                        else if {new_position} > {slide_number} then
+                            duplicate sourceSlide to after slide {new_position} of targetDoc
+                            set newSlideNum to {new_position} + 1
+                        else
+                            duplicate sourceSlide to before slide {new_position} of targetDoc
+                            set newSlideNum to {new_position}
+                        end if
+                    end tell
+
+                    return newSlideNum
                 end tell
             ''')
             

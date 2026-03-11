@@ -116,7 +116,7 @@ cp -r skills/keynote-presentation ~/.claude/skills/keynote-presentation
 |----------|-------|
 | **Presentation** | create, open, save, close, list, themes, resolution, slide size |
 | **Slides** | add, delete, duplicate, move, select, layouts, slide info |
-| **Content** | text boxes, titles, subtitles, bullet lists, numbered lists, code blocks, quotes, images, edit, delete, move, resize elements, speaker notes |
+| **Content** | text boxes (with font/color control), titles, subtitles, bullet lists, numbered lists, code blocks (with color), quotes, images, shapes (with opacity), edit, delete, move, resize elements, set element opacity, clear slide, speaker notes |
 | **Export** | screenshot slides, export PDF |
 | **Unsplash** | search images, add to slides, random images (requires `UNSPLASH_KEY`) |
 
@@ -135,6 +135,9 @@ The `keynote-presentation` skill (`skills/keynote-presentation/`) solves real pr
 - **Font clipping bug**: Large font sizes (>48pt) create tiny text boxes that clip text to 1-2 characters. The skill teaches Claude the resize-then-edit workaround.
 - **Theme pitfalls**: Many themes (Gradient, Minimalist Dark) don't show backgrounds on Blank slides. The skill includes a tested compatibility table.
 - **Coordinate math**: No text-align property exists. The skill provides per-character width estimates for manual centering.
+- **Shape fill limitation**: Shape fill color is NOT writable via AppleScript. The skill documents the opacity workaround for dark-theme containers.
+- **Dark theme color reference**: Tested RGB values for white text, gray subtitles, green code comments, and blue section headers.
+- **Two-column layouts**: Proven coordinates for code-left/bullets-right slides using `add_shape` containers.
 - **Design patterns**: Landing-page-style slide templates (hero, statement, bullets, code demo, closing) with tested positions.
 
 ### Skill structure

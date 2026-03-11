@@ -29,8 +29,9 @@ src/
     tools/
       presentation.py      — create/open/save/close/list presentations, themes, resolution
       slide.py             — add/delete/duplicate/move slides, layouts
-      content.py           — add text boxes/titles/subtitles/lists/code/quotes/images,
-                             edit/delete/move/resize elements, speaker notes, get_slide_content
+      content.py           — add text boxes (font/color)/titles/subtitles/lists/code (color)/
+                             quotes/images/shapes (opacity), edit/delete/move/resize elements,
+                             set_element_opacity, clear_slide, speaker notes, get_slide_content
       export.py            — screenshot slides, export PDF
       unsplash.py          — search/add Unsplash images (requires UNSPLASH_KEY env var)
     utils/

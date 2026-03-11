@@ -156,7 +156,10 @@ class KeynoteMCPServer:
                         slide_number=arguments["slide_number"],
                         text=arguments["text"],
                         x=arguments.get("x"),
-                        y=arguments.get("y")
+                        y=arguments.get("y"),
+                        font_size=arguments.get("font_size"),
+                        font_name=arguments.get("font_name", ""),
+                        color=arguments.get("color", "")
                     )
                 elif name == "add_title":
                     return await self.content_tools.add_title(
@@ -201,7 +204,8 @@ class KeynoteMCPServer:
                         x=arguments.get("x"),
                         y=arguments.get("y"),
                         font_size=arguments.get("font_size"),
-                        font_name=arguments.get("font_name", "")
+                        font_name=arguments.get("font_name", ""),
+                        color=arguments.get("color", "")
                     )
                 elif name == "add_quote":
                     return await self.content_tools.add_quote(
@@ -265,6 +269,29 @@ class KeynoteMCPServer:
                     return await self.content_tools.set_speaker_notes(
                         slide_number=arguments["slide_number"],
                         notes=arguments["notes"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "clear_slide":
+                    return await self.content_tools.clear_slide(
+                        slide_number=arguments["slide_number"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "set_element_opacity":
+                    return await self.content_tools.set_element_opacity(
+                        slide_number=arguments["slide_number"],
+                        element_type=arguments["element_type"],
+                        element_index=arguments["element_index"],
+                        opacity=arguments["opacity"],
+                        doc_name=arguments.get("doc_name", "")
+                    )
+                elif name == "add_shape":
+                    return await self.content_tools.add_shape(
+                        slide_number=arguments["slide_number"],
+                        x=arguments.get("x"),
+                        y=arguments.get("y"),
+                        width=arguments.get("width"),
+                        height=arguments.get("height"),
+                        opacity=arguments.get("opacity"),
                         doc_name=arguments.get("doc_name", "")
                     )
 

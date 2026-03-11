@@ -37,6 +37,18 @@ class ContentTools:
                         "y": {
                             "type": "number",
                             "description": "Y coordinate in pixels (optional). Origin (0,0) is top-left. Suggested: 50-650px"
+                        },
+                        "font_size": {
+                            "type": "number",
+                            "description": "Font size (optional)"
+                        },
+                        "font_name": {
+                            "type": "string",
+                            "description": "Font name (optional)"
+                        },
+                        "color": {
+                            "type": "string",
+                            "description": "Text color as 'r,g,b' with values 0-65535 (optional, e.g. '65535,65535,65535' for white)"
                         }
                     },
                     "required": ["slide_number", "text"]
@@ -209,6 +221,10 @@ class ContentTools:
                         "font_name": {
                             "type": "string",
                             "description": "Font name (optional, default Monaco)"
+                        },
+                        "color": {
+                            "type": "string",
+                            "description": "Text color as 'r,g,b' with values 0-65535 (optional, e.g. '65535,65535,65535' for white)"
                         }
                     },
                     "required": ["slide_number", "code"]
@@ -454,10 +470,98 @@ class ContentTools:
                     },
                     "required": ["slide_number", "notes"]
                 }
+            ),
+            Tool(
+                name="clear_slide",
+                description="Clear all user-created content from a slide, preserving background images and theme placeholders",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number"]
+                }
+            ),
+            Tool(
+                name="set_element_opacity",
+                description="Set opacity (0-100) on any element",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "element_type": {
+                            "type": "string",
+                            "description": "Element type: text, image, shape, or table",
+                            "enum": ["text", "image", "shape", "table"]
+                        },
+                        "element_index": {
+                            "type": "integer",
+                            "description": "Element index (1-based)"
+                        },
+                        "opacity": {
+                            "type": "number",
+                            "description": "Opacity value (0-100)"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number", "element_type", "element_index", "opacity"]
+                }
+            ),
+            Tool(
+                name="add_shape",
+                description="Create a rectangle shape with optional position, size, and opacity",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "slide_number": {
+                            "type": "integer",
+                            "description": "Slide number"
+                        },
+                        "x": {
+                            "type": "number",
+                            "description": "X coordinate in pixels (optional)"
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "Y coordinate in pixels (optional)"
+                        },
+                        "width": {
+                            "type": "number",
+                            "description": "Width in pixels (optional, default 200)"
+                        },
+                        "height": {
+                            "type": "number",
+                            "description": "Height in pixels (optional, default 200)"
+                        },
+                        "opacity": {
+                            "type": "number",
+                            "description": "Opacity value 0-100 (optional, default 100)"
+                        },
+                        "doc_name": {
+                            "type": "string",
+                            "description": "Document name (optional, defaults to front document)"
+                        }
+                    },
+                    "required": ["slide_number"]
+                }
             )
         ]
     
-    async def add_text_box(self, slide_number: int, text: str, x: Optional[float] = None, y: Optional[float] = None, doc_name: str = "") -> List[TextContent]:
+    async def add_text_box(self, slide_number: int, text: str, x: Optional[float] = None, y: Optional[float] = None,
+                          font_size: Optional[float] = None, font_name: str = "", color: str = "", doc_name: str = "") -> List[TextContent]:
         """Add text box"""
         try:
             validate_slide_number(slide_number)
@@ -465,6 +569,19 @@ class ContentTools:
 
             # Escape quotes in text
             escaped_text = text.replace('"', '\\"')
+
+            # Build optional tell block commands
+            tell_commands = []
+            if font_size is not None:
+                tell_commands.append(f"set size of object text to {font_size}")
+            if font_name:
+                tell_commands.append(f'set font of object text to "{font_name}"')
+            if color:
+                tell_commands.append(f"set color of object text to {{{color.replace(',', ', ')}}}")
+
+            tell_block = ""
+            if tell_commands:
+                tell_block = "tell newTextBox\n" + "\n".join(f"                                {cmd}" for cmd in tell_commands) + "\n                            end tell"
 
             # Use inline script with correct syntax
             result = self.runner.run_inline_script(f'''
@@ -475,17 +592,19 @@ class ContentTools:
                     else
                         set targetDoc to front document
                     end if
-                    
+
                     tell targetDoc
                         tell slide {slide_number}
                             -- Create text box
                             set newTextBox to make new text item with properties {{object text:"{escaped_text}"}}
-                            
+
                             -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newTextBox to {{{x_pos}, {y_pos}}}"}
+
+                            {tell_block if tell_block else "-- no font/color specified"}
                         end tell
                     end tell
-                    
+
                     return "success"
                 end tell
             ''')
@@ -715,8 +834,8 @@ class ContentTools:
                 text=f"❌ Failed to add numbered list: {str(e)}"
             )]
     
-    async def add_code_block(self, slide_number: int, code: str, x: Optional[float] = None, y: Optional[float] = None, 
-                            font_size: Optional[int] = None, font_name: str = "", doc_name: str = "") -> List[TextContent]:
+    async def add_code_block(self, slide_number: int, code: str, x: Optional[float] = None, y: Optional[float] = None,
+                            font_size: Optional[int] = None, font_name: str = "", color: str = "", doc_name: str = "") -> List[TextContent]:
         """Add code block"""
         try:
             validate_slide_number(slide_number)
@@ -724,7 +843,10 @@ class ContentTools:
 
             # Escape quotes and newlines in code
             escaped_code = code.replace('"', '\\"').replace('\n', '\\n')
-            
+
+            # Build color command if provided
+            color_command = f"set color of object text to {{{color.replace(',', ', ')}}}" if color else "-- no color specified"
+
             result = self.runner.run_inline_script(f'''
                 tell application "Keynote"
                     activate
@@ -733,21 +855,22 @@ class ContentTools:
                     else
                         set targetDoc to front document
                     end if
-                    
+
                     tell targetDoc
                         tell slide {slide_number}
                             set newCodeBlock to make new text item with properties {{object text:"{escaped_code}"}}
-                            
+
                             -- Set position (if x or y coordinates are specified)
                             {"" if x is None and y is None else f"set position of newCodeBlock to {{{x_pos}, {y_pos}}}"}
-                            
+
                             tell newCodeBlock
                                 set size of object text to {font_size if font_size else 14}
                                 set font of object text to "{font_name if font_name else 'Monaco'}"
+                                {color_command}
                             end tell
                         end tell
                     end tell
-                    
+
                     return "success"
                 end tell
             ''')
@@ -1062,4 +1185,83 @@ class ContentTools:
             ''')
             return [TextContent(type="text", text=f"Speaker notes set on slide {slide_number}.")]
         except Exception as e:
-            return [TextContent(type="text", text=f"Failed to set speaker notes: {str(e)}")] 
+            return [TextContent(type="text", text=f"Failed to set speaker notes: {str(e)}")]
+
+    async def clear_slide(self, slide_number: int, doc_name: str = "") -> List[TextContent]:
+        """Clear all user-created content from a slide, preserving background images and theme placeholders."""
+        try:
+            validate_slide_number(slide_number)
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        -- Delete shapes from highest to lowest
+                        set shapeCount to count of shapes
+                        repeat with i from shapeCount to 1 by -1
+                            delete shape i
+                        end repeat
+
+                        -- Delete text items from highest to lowest, SKIP theme placeholders
+                        set textCount to count of text items
+                        repeat with i from textCount to 1 by -1
+                            set ti to text item i
+                            set pos to position of ti
+                            set txt to object text of ti
+                            -- Skip theme placeholders (empty text at 0,0)
+                            if not ((item 1 of pos) is 0 and (item 2 of pos) is 0 and txt is "") then
+                                delete ti
+                            end if
+                        end repeat
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Cleared slide {slide_number}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to clear slide: {str(e)}")]
+
+    async def set_element_opacity(self, slide_number: int, element_type: str, element_index: int, opacity: float, doc_name: str = "") -> List[TextContent]:
+        """Set opacity on any element."""
+        try:
+            validate_slide_number(slide_number)
+            validate_element_type(element_type)
+            if not isinstance(element_index, int) or element_index < 1:
+                raise ParameterError(f"Invalid element_index: {element_index}. Must be a positive integer.")
+            if opacity < 0 or opacity > 100:
+                raise ParameterError(f"Invalid opacity: {opacity}. Must be between 0 and 100.")
+            as_type = self._ELEMENT_TYPE_MAP[element_type]
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set opacity of {as_type} {element_index} to {opacity}
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Set opacity of {element_type} {element_index} on slide {slide_number} to {opacity}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to set element opacity: {str(e)}")]
+
+    async def add_shape(self, slide_number: int, x: Optional[float] = None, y: Optional[float] = None,
+                        width: Optional[float] = None, height: Optional[float] = None,
+                        opacity: Optional[float] = None, doc_name: str = "") -> List[TextContent]:
+        """Create a rectangle shape."""
+        try:
+            validate_slide_number(slide_number)
+            x_pos, y_pos = validate_coordinates(x, y)
+            w = width if width is not None else 200
+            h = height if height is not None else 200
+            op = opacity if opacity is not None else 100
+            if op < 0 or op > 100:
+                raise ParameterError(f"Invalid opacity: {op}. Must be between 0 and 100.")
+            self.runner.run_inline_script(f'''
+                tell application "Keynote"
+                    {self._doc_tell(doc_name)}
+                    tell slide {slide_number} of targetDoc
+                        set newShape to make new shape with properties {{position:{{{x_pos}, {y_pos}}}, width:{w}, height:{h}}}
+                        set opacity of newShape to {op}
+                    end tell
+                end tell
+            ''')
+            return [TextContent(type="text", text=f"Added shape to slide {slide_number} at ({x_pos}, {y_pos}), size {w}x{h}, opacity {op}.")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to add shape: {str(e)}")] 
