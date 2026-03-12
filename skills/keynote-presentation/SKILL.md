@@ -73,6 +73,7 @@ Add click-to-reveal effects so content appears incrementally during presentation
 get_slide_content(slide_number=N)
 add_builds_to_slide(slide_number=N, element_indices="5,7,9,11,13")
 ```
+- **Never build shapes** — container shapes are structural, always visible
 - Auto-skips bullet dot items ("•")
 - Requires Keynote frontmost + Accessibility permissions
 - ~6 seconds per element (UI scripting)

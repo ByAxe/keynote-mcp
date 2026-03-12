@@ -56,6 +56,7 @@ For slides where "• text" is a single item, include that index directly.
 
 ## Tips
 
+- **NEVER add builds to shapes** — container shapes (boxes, borders, callout backgrounds) are structural and must always be visible from slide open. Only add builds to text and image content inside them.
 - Skip title (TEXT:1), subtitle (TEXT:2), and slide number items
 - Skip empty items at position (0,0) — these are theme placeholders
 - For PDF export with build stages: File → Export to → PDF → "Print each stage of builds"
