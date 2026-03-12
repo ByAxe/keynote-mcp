@@ -313,7 +313,20 @@ class SlideTools:
         try:
             validate_slide_number(from_position)
             validate_slide_number(to_position)
-            
+
+            if from_position == to_position:
+                return [TextContent(
+                    type="text",
+                    text=f"✅ Slide already at position {to_position}"
+                )]
+
+            # Use 'before' when moving backward, 'after' when moving forward.
+            # Plain 'move X to slide Y' REPLACES slide Y, destroying it.
+            if to_position < from_position:
+                insert_ref = f"before slide {to_position}"
+            else:
+                insert_ref = f"after slide {to_position}"
+
             self.runner.run_inline_script(f'''
                 tell application "Keynote"
                     if "{doc_name}" is "" then
@@ -321,12 +334,11 @@ class SlideTools:
                     else
                         set targetDoc to document "{doc_name}"
                     end if
-                    
-                    set sourceSlide to slide {from_position} of targetDoc
-                    move sourceSlide to slide {to_position} of targetDoc
+
+                    move slide {from_position} of targetDoc to {insert_ref} of targetDoc
                 end tell
             ''')
-            
+
             return [TextContent(
                 type="text",
                 text=f"✅ Moved slide from position {from_position} to position {to_position}"
