@@ -102,6 +102,8 @@ cp -r skills/keynote-presentation ~/.claude/skills/keynote-presentation
 - System Settings > Privacy & Security > Accessibility — add Terminal/your IDE
 - System Settings > Privacy & Security > Automation — allow Python to control Keynote
 
+> **Security note:** Accessibility permissions are granted per-binary, not per-project. When you grant Accessibility access to `python`, all Python processes share that permission. Most keynote-mcp tools use plain AppleScript (no Accessibility needed) — only build animations require it. For stricter isolation, you can build a standalone binary (see [Standalone Binary](#standalone-binary) below) so keynote-mcp gets its own permission entry.
+
 ### 5. Use it
 
 ```
@@ -171,6 +173,34 @@ src/
 skills/                    # Claude Skills for this MCP
 tests/                     # Test scaffolding
 ```
+
+## Standalone Binary
+
+For security-conscious users who don't want to grant Accessibility permissions to the shared `python` binary, you can build keynote-mcp as a standalone executable with its own permission entry:
+
+```bash
+# Install pyinstaller
+pip install pyinstaller
+
+# Build standalone binary (~31MB)
+pyinstaller --onefile --name keynote-mcp src/keynote_mcp/__main__.py
+
+# Code-sign so macOS tracks it as its own app
+codesign -s - -f dist/keynote-mcp
+```
+
+Then use the binary in your MCP config:
+```json
+{
+  "mcpServers": {
+    "keynote-mcp": {
+      "command": "/absolute/path/to/dist/keynote-mcp"
+    }
+  }
+}
+```
+
+When you grant Accessibility permission, it will appear as "keynote-mcp" instead of "Python".
 
 ## Contributing
 
