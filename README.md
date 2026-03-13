@@ -9,6 +9,10 @@ An MCP server that gives AI full control over Apple Keynote through AppleScript 
 
 Ships with a **Claude Skill** that encodes layout rules, font workarounds, and design patterns so presentations come out right on the first try.
 
+<a href="https://glama.ai/mcp/servers/ByAxe/keynote-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/ByAxe/keynote-mcp/badge" alt="keynote-mcp MCP server" />
+</a>
+
 ## Quick Start
 
 ### Prerequisites
